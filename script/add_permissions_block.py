@@ -1,9 +1,10 @@
 import sys
-import yaml
+from ruamel.yaml import YAML
 
 def add_permissions_block(file_path):
+    yaml = YAML()
     with open(file_path, 'r') as file:
-        data = yaml.load(file, Loader=yaml.FullLoader)
+        data = yaml.load(file)
 
     # Check if 'on' block exists
     if 'on' in data:
@@ -14,7 +15,7 @@ def add_permissions_block(file_path):
         data['blank_key'] = ''
 
         with open(file_path, 'w') as file:
-            yaml.dump(data, file, default_flow_style=False)
+            yaml.dump(data, file)
         
         print(f"Added permissions block to {file_path}")
     else:
