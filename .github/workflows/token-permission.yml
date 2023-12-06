@@ -26,6 +26,11 @@ jobs:
               fi
           done
 
+      - name: Print Debug Information
+        run: |
+          pwd
+          git status
+
       - name: Commit Changes
         run: |
           cd $GITHUB_WORKSPACE
