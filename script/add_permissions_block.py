@@ -1,5 +1,6 @@
 import sys
 from ruamel.yaml import YAML
+from ruamel.yaml.comments import CommentedSeq, CommentedMap
 
 def add_permissions_block(file_path):
     yaml = YAML()
@@ -8,16 +9,16 @@ def add_permissions_block(file_path):
     with open(file_path, 'r') as file:
         data = yaml.load(file)
 
-    permissions_block = {
-        'permissions': 'write-all'
-    }
+    permissions_block = CommentedMap()
+    permissions_block['permissions'] = 'write-all'
 
     # Check if 'on' block exists
     if 'on' in data:
         # Insert 'permissions' block after 'on' block
         index_on = list(data).index('on') + 1
-        data.insert(index_on, yaml.comments.CommentToken('\n\n', yaml.error.CommentMark(0), None))
-        data.insert(index_on, permissions_block)
+        data.insert(index_on, CommentedMap())
+        data.insert(index_on + 1, permissions_block)
+        data.insert(index_on + 2, CommentedMap())
 
         with open(file_path, 'w') as file:
             yaml.dump(data, file)
