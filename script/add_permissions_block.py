@@ -1,19 +1,20 @@
-import ruamel.yaml
 import sys
+from ruamel.yaml import YAML
 
 def add_permissions_block(file_path):
-    yaml = ruamel.yaml.YAML()
-    yaml.indent(offset=2)
+    with open(file_path, 'r') as file:
+        yaml = YAML()
+        data = yaml.load(file)
+    
+    if 'permissions' not in data:
+        data.insert(data.keys().index('on') + 1, 'permissions', 'write-all')
 
-    with open(file_path, 'r') as f:
-        content = yaml.load(f)
+        with open(file_path, 'w') as file:
+            yaml.dump(data, file)
 
-    if 'on' in content and isinstance(content['on'], dict):
-        content['permissions'] = 'write-all'
-
-    yaml.explicit_start = True
-    with open(file_path, 'w') as f:
-        yaml.dump(content, f)
+        print(f"Added permissions block to {file_path}")
+    else:
+        print(f"Permissions block already exists in {file_path}. Skipping...")
 
 if __name__ == "__main__":
     file_path = sys.argv[1]
