@@ -1,6 +1,5 @@
 import sys
-import ruamel.yaml
-import yaml
+from ruamel.yaml import YAML
 
 def add_permissions_block(file_path):
     with open(file_path, 'r') as file:
