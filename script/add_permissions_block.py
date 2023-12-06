@@ -16,6 +16,9 @@ def add_permissions_block(file_path):
         index = list(data).index('on') + 1
         data.insert(index, 'permissions', 'write-all')
 
+        # Add a comment to create a blank line before 'permissions' block
+        yaml.add_eol_comment('', 'permissions', column=0)
+
         with open(file_path, 'w') as file:
             yaml.dump(data, file)
         
