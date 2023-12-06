@@ -16,6 +16,9 @@ def add_permissions_block(file_path):
         index = list(data).index('on') + 1
         data.insert(index, 'permissions', 'write-all')
 
+        index_permissions = list(data).index('permissions') + 1
+        data.insert(index_permissions, '')
+
         with open(file_path, 'w') as file:
             yaml.dump(data, file)
         
