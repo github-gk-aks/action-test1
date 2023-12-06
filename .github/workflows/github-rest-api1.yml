@@ -32,5 +32,4 @@ jobs:
       uses: ./github/actions/Coke2litre
       with:
         CommitSha: ${{github.sha}}
-permissions: write-all
-blank_key: ''
+
