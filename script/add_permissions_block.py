@@ -5,16 +5,22 @@ def add_permissions_block(file_path):
     with open(file_path, 'r') as file:
         yaml = YAML()
         data = yaml.load(file)
+
+    permissions_block = {
+        'permissions': 'write-all'
+    }
     
-    if 'permissions' not in data:
-        data.insert(data.keys().index('on') + 1, 'permissions', 'write-all')
+    # Check if 'on' block exists
+    if 'on' in data:
+        # Insert 'permissions' block after 'on' block
+        data['permissions'] = 'write-all'
 
         with open(file_path, 'w') as file:
             yaml.dump(data, file)
-
+        
         print(f"Added permissions block to {file_path}")
     else:
-        print(f"Permissions block already exists in {file_path}. Skipping...")
+        print(f"'on:' block not found in {file_path}. Skipping...")
 
 if __name__ == "__main__":
     file_path = sys.argv[1]
