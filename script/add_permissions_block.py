@@ -13,7 +13,7 @@ def add_permissions_block(file_path):
     # Check if 'on' block exists
     if 'on' in data:
         # Insert 'permissions' block after 'on' block
-        index = list(data).index('on') + 1
+        index = list(data).index('on') + 2
         data.insert(index, 'permissions', 'write-all')
 
         with open(file_path, 'w') as file:
