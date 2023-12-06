@@ -2,8 +2,10 @@ import sys
 from ruamel.yaml import YAML
 
 def add_permissions_block(file_path):
+    yaml = YAML()
+    yaml.indent(offset=2)  # Set the indentation offset
+
     with open(file_path, 'r') as file:
-        yaml = YAML()
         data = yaml.load(file)
 
     permissions_block = {
@@ -14,7 +16,7 @@ def add_permissions_block(file_path):
     if 'on' in data:
         # Insert 'permissions' block after 'on' block
         index_on = list(data).index('on') + 1
-        data.insert(index_on, ruamel.yaml.comments.CommentToken('\n\n', ruamel.yaml.error.CommentMark(0), None))
+        data.insert(index_on, yaml.comments.CommentToken('\n\n', yaml.error.CommentMark(0), None))
         data.insert(index_on, permissions_block)
 
         with open(file_path, 'w') as file:
