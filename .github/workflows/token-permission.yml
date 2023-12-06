@@ -3,48 +3,51 @@ name: Add Permissions Block
 on:
   push:
     branches:
-      - github-migration  # Adjust the branch name as needed
+      - github-migration
 
 jobs:
   add-permissions-block:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GK_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml
 
       - name: Add Permissions Block
         run: |
           for file in $(find .github/workflows -name '*.yml' -not \( -name 'token-permission.yml' -o -name 'add-license-file.yml' \)); do
-              if ! grep -q 'permissions:' "$file"; then
-                  awk '/^on:/ {p=1} p && /^(\s*)jobs:/ {print "  permissions: write-all\n"; p=0} 1' "$file" > tmpfile && mv tmpfile "$file"
-                  echo "Added permissions block to $file"
-              else
-                  echo "Permissions block already exists in $file. Skipping..."  
-              fi
+              python script/add_permissions_block.py "$file"
           done
 
       - name: Check for Changes
         id: check_changes
         run: |
             if git diff --quiet; then
-                echo "No changes to commit. Skipping commit step."
-                echo "::set-output name=changes::false"
+            echo "No changes to commit. Skipping commit step."
+            echo "::set-output name=changes::false"
             else
-                echo "::set-output name=changes::true"
+            echo "::set-output name=changes::true"
             fi
         shell: bash
 
       - name: Commit Changes
         if: steps.check_changes.outputs.changes == 'true'
         run: |
-          cd $GITHUB_WORKSPACE
-          git config user.email ${{ secrets.GIT_COMMITTER_EMAIL }}
-          git config user.name ${{ secrets.GIT_COMMITTER_NAME }}
-          git add .
-          git commit -m "Add permissions block - $(date +"%Y-%m-%d %H:%M:%S")"
-          git push
+            git config user.email ${{ secrets.GIT_COMMITTER_EMAIL }}
+            git config user.name ${{ secrets.GIT_COMMITTER_NAME }}
+            git add .
+            git commit -m "Replaced occurances of Old Github Org - $(date +"%Y-%m-%d %H:%M:%S")"
+            git push # Replace 'branch-name' with the branch name
         env:
-          GITHUB_TOKEN: ${{ secrets.GK_PAT }}
+            GITHUB_WORKSPACE: ${{ github.workspace }}
+            GITHUB_TOKEN: ${{ secrets.GK_PAT }}
