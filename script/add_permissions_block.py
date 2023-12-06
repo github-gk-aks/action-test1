@@ -16,9 +16,9 @@ def add_permissions_block(file_path):
         index = list(data).index('on') + 1
         data.insert(index, 'permissions', 'write-all')
 
-        # Add a comment to create a blank line before 'permissions' block
-        comment = yaml.comment("\n")
-        data.yaml_set_comment_before_after_key('permissions', before=comment)
+        # Add a start comment to create a blank line before 'permissions' block
+        comment = "\n"  # newline character
+        data.yaml_set_start_comment(comment, 'permissions')
 
         with open(file_path, 'w') as file:
             yaml.dump(data, file)
