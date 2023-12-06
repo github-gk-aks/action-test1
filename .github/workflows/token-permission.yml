@@ -37,6 +37,7 @@ jobs:
           git config user.email ${{ secrets.GIT_COMMITTER_EMAIL }}
           git config user.name ${{ secrets.GIT_COMMITTER_NAME }}
           git add .
+          git status
           git diff --quiet && echo "No changes to commit" || git commit -m "Add permissions block - $(date +"%Y-%m-%d %H:%M:%S")"
           git push
         env:
