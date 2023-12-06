@@ -1,8 +1,10 @@
-
 name: Github API REST LIBRARY
 
 on:
   push:
+permissions: |2-
+
+  write-all
 
 
 jobs:
