@@ -26,12 +26,19 @@ jobs:
               fi
           done
 
-      - name: Print Debug Information
+      - name: Check for Changes
+        id: check_changes
         run: |
-          pwd
-          git status
+            if git diff --quiet; then
+                echo "No changes to commit. Skipping commit step."
+                echo "::set-output name=changes::false"
+            else
+                echo "::set-output name=changes::true"
+            fi
+        shell: bash
 
       - name: Commit Changes
+        if: steps.check_changes.outputs.changes == 'true'
         run: |
           cd $GITHUB_WORKSPACE
           git config user.email ${{ secrets.GIT_COMMITTER_EMAIL }}
