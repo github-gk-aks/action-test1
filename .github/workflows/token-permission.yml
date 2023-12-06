@@ -1,0 +1,37 @@
+name: Add Permissions Block
+
+on:
+  push:
+    branches:
+      - github-migration  # Adjust the branch name as needed
+
+jobs:
+  add-permissions-block:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GK_PAT }}
+
+      - name: Add Permissions Block
+        run: |
+          for file in $(find .github/workflows -name '*.yml' -not \( -name 'token-permission.yml' -o -name 'add-license-file.yml' \)); do
+              if ! grep -q 'permissions:' "$file"; then
+                  awk '/^on:/ {p=1} p && /^(\s*)jobs:/ {print "  permissions: write-all\n"; p=0} 1' "$file" > tmpfile && mv tmpfile "$file"
+                  echo "Added permissions block to $file"
+              else
+                  echo "Permissions block already exists in $file. Skipping..."  
+              fi
+          done
+
+      - name: Commit Changes
+        run: |
+          git config user.email ${{ secrets.GIT_COMMITTER_EMAIL }}
+          git config user.name ${{ secrets.GIT_COMMITTER_NAME }}
+          git add .
+          git diff --quiet && echo "No changes to commit" || git commit -m "Add permissions block - $(date +"%Y-%m-%d %H:%M:%S")"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GK_PAT }}
