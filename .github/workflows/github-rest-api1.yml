@@ -3,6 +3,7 @@ name: Github API REST LIBRARY
 on:
   push:
 
+
 jobs:
   rest-api-library:
     if: ${{ github.event_name != 'push' }}
@@ -32,5 +33,3 @@ jobs:
       uses: ./github/actions/Coke2litre
       with:
         CommitSha: ${{github.sha}}
-
-permissions: write-all
