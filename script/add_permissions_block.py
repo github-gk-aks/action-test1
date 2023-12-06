@@ -1,5 +1,6 @@
 import sys
 from ruamel.yaml import YAML
+from ruamel.yaml.scalarstring import PreservedScalarString
 
 def add_permissions_block(file_path):
     with open(file_path, 'r') as file:
@@ -14,11 +15,7 @@ def add_permissions_block(file_path):
     if 'on' in data:
         # Insert 'permissions' block after 'on' block
         index = list(data).index('on') + 1
-        data.insert(index, 'permissions', 'write-all')
-
-        # Add a start comment to create a blank line before 'permissions' block
-        comment = "\n"  # newline character
-        data.yaml_set_start_comment(comment, 'permissions')
+        data.insert(index, 'permissions', PreservedScalarString('\nwrite-all'))
 
         with open(file_path, 'w') as file:
             yaml.dump(data, file)
