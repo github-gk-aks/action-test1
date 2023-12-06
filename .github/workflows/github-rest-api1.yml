@@ -2,8 +2,6 @@ name: Github API REST LIBRARY
 
 on:
   push:
-permissions: write-all
-'blank_key:': ''
 
 jobs:
   rest-api-library:

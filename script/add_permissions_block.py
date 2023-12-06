@@ -14,11 +14,8 @@ def add_permissions_block(file_path):
     if 'on' in data:
         # Insert 'permissions' block after 'on' block
         index_on = list(data).index('on') + 1
-        data.insert(index_on, 'permissions', 'write-all')
-
-        # Insert a blank line after 'permissions' block
-        index_permissions = list(data).index('permissions')
-        data.insert(index_permissions + 1, 'blank_key:', '')
+        data.insert(index_on, ruamel.yaml.comments.CommentToken('\n\n', ruamel.yaml.error.CommentMark(0), None))
+        data.insert(index_on, permissions_block)
 
         with open(file_path, 'w') as file:
             yaml.dump(data, file)
