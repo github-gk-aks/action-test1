@@ -9,11 +9,12 @@ def add_permissions_block(file_path):
     permissions_block = {
         'permissions': 'write-all'
     }
-    
+
     # Check if 'on' block exists
     if 'on' in data:
         # Insert 'permissions' block after 'on' block
-        data['permissions'] = 'write-all'
+        index = list(data).index('on') + 1
+        data.insert(index, 'permissions', 'write-all')
 
         with open(file_path, 'w') as file:
             yaml.dump(data, file)
