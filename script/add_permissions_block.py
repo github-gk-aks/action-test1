@@ -16,13 +16,13 @@ def add_permissions_block(file_path):
         index = list(data).index('on') + 1
         data.yaml_set_comment_before_after_key('permissions', before='\n')
         data.insert(index, 'permissions', 'write-all')
-
+        
         with open(file_path, 'w') as file:
             yaml.dump(data, file)
         
         print(f"Added permissions block to {file_path}")
-    elif 'permissions' in data:
-        print(f"'permissions:' block already exists in {file_path}. Skipping...")
+    elif 'permissions' in data.get('jobs', {}):
+        print(f"'permissions:' block already exists in the 'jobs' block of {file_path}. Skipping...")
     else:
         print(f"'on:' block not found in {file_path}. Skipping...")
 
