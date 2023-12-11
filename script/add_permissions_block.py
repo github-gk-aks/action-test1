@@ -30,8 +30,11 @@ def process_workflow_files():
     exclude_patterns = ['token-permission.yml', 'add-license-file.yml']
 
     for file_path in workflow_files:
-        # Check if the entire file path should be excluded
-        if any(fnmatch(file_path, pattern) for pattern in exclude_patterns):
+        # Extracting only the file name from the full path
+        file_name = os.path.basename(file_path)
+        
+        # Check if the file should be excluded
+        if any(fnmatch(file_name, pattern) for pattern in exclude_patterns):
             print(f"Skipping {file_path}")
             continue
 

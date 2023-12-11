@@ -1,7 +1,8 @@
 name: Add Permissions Block
+
 on:
   workflow_dispatch:
-permissions: write-all
+
 jobs:
   add-permissions-block:
     runs-on: ubuntu-latest
