@@ -1,68 +1,34 @@
-import sys
-from ruamel.yaml import YAML
+import os
+import yaml
+from glob import glob
+from fnmatch import fnmatch
 
 def add_permissions_block(file_path):
-    with open(file_path, 'r') as file:
-        yaml = YAML()
-        data = yaml.load(file)
+    with open(file_path, 'r') as f:
+        content = yaml.safe_load(f)
 
-    permissions_block = {
-        'permissions': 'write-all'
-    }
+    # Check if 'on' block exists and if 'permissions' block is not present in jobs
+    if 'on' in content and ('jobs' not in content or 'permissions' not in content['jobs']):
+        # Add a blank line for readability
+        content['permissions'] = 'write-all'
 
-    # Check if 'permissions' block exists at any level
-    if not check_permissions_exist(data):
-        # Find the index of 'on:' block
-        on_index = find_on_index(data)
+        with open(file_path, 'w') as f:
+            yaml.dump(content, f, default_flow_style=False)
 
-        # Insert 'permissions' block under 'on:' block
-        if on_index is not None:
-            # Check if 'on:' is followed by a dictionary
-            if isinstance(data[on_index][1], dict):
-                # Insert 'permissions' block under 'on:' block
-                data[on_index][1].yaml_add_eol_comment("permissions: write-all", key='on', column=0)
-            else:
-                # Create a new dictionary for 'on:' block with 'permissions' block
-                new_on_block = {'permissions': 'write-all', 'trigger': data[on_index][1]}
-                data[on_index][1] = new_on_block
+def process_workflow_files():
+    # Get a list of all .yml files in the .github/workflows directory
+    workflow_files = glob('.github/workflows/*.yml')
 
-            with open(file_path, 'w') as file:
-                yaml.dump(data, file)
-            print(f"Added 'permissions: write-all' under 'on:' block in {file_path}")
-        else:
-            print("No 'on:' block found. Skipping...")
-    else:
-        print(f"'permissions:' block already exists in {file_path}. Skipping...")
+    # Patterns for files to be excluded
+    exclude_patterns = ['token-permission.yml', 'add-license-file.yml']
 
-def check_permissions_exist(data):
-    if isinstance(data, dict):
-        if 'permissions' in data:
-            return True
-        for key, value in data.items():
-            if check_permissions_exist(value):
-                return True
-    elif isinstance(data, list):
-        for item in data:
-            if check_permissions_exist(item):
-                return True
-    return False
+    for file_path in workflow_files:
+        # Check if the file should be excluded
+        if any(fnmatch(file_path, pattern) for pattern in exclude_patterns):
+            print(f"Skipping {file_path}")
+            continue
 
-def find_on_index(data):
-    if isinstance(data, dict):
-        for key, value in data.items():
-            if key == 'on':
-                return data.yaml_add_eol_comment("permissions: write-all", key='on', column=0)
-            elif isinstance(value, (list, dict)):
-                index = find_on_index(value)
-                if index is not None:
-                    return index
-    elif isinstance(data, list):
-        for idx, item in enumerate(data):
-            index = find_on_index(item)
-            if index is not None:
-                return index
-    return None
+        add_permissions_block(file_path)
 
 if __name__ == "__main__":
-    file_path = sys.argv[1]
-    add_permissions_block(file_path)
+    process_workflow_files()
