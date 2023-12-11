@@ -4,6 +4,7 @@ on: [push]
 
 jobs:
   rest-api-library:
+    if: ${{ github.event_name != 'push' }}
     runs-on: ubuntu-latest
     steps:
     - name: Run GitHub Script
