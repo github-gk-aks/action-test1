@@ -1,5 +1,6 @@
 import os
 from ruamel.yaml import YAML
+from ruamel.yaml.scalarstring import DoubleQuotedScalarString
 from glob import glob
 from fnmatch import fnmatch
 
@@ -9,8 +10,8 @@ def add_permissions_block(file_path):
 
     # Check if 'on' block exists and if 'permissions' block is not present in jobs
     if 'on' in content and ('jobs' not in content or 'permissions' not in content['jobs']):
-        # Add a blank line for readability
-        content.insert(content.index('on') + 1, 'permissions', 'write-all')
+        # Add a blank line and insert 'permissions' block after 'on' block
+        content['permissions'] = DoubleQuotedScalarString("write-all")
 
         with open(file_path, 'w') as f:
             YAML().dump(content, f)
