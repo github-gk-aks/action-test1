@@ -23,8 +23,11 @@ def insert_blank_line(data, key, anchor, yaml):
     if anchor in data and key in data:
         index = list(data.keys()).index(anchor) + 1
         # Insert a blank line after 'on' block
-        data.yaml_set_comment_before_after_key(key, before='\n', indent=data.ca.items[key][0].start_mark.column)
+        if key in data.ca.items:
+            indent = data.ca.items[key][0].start_mark.column
+            data.yaml_set_comment_before_after_key(key, before='\n', indent=indent)
         data.insert(index, key, data[key])
+
 
 
 def process_workflow_files():
