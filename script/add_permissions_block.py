@@ -7,10 +7,10 @@ def add_permissions_block(file_path):
     with open(file_path, 'r') as f:
         content = YAML().load(f)
 
-    # Check if 'on' block exists and if 'permissions' block is not present at the top level
+    # Check if 'on' block exists and if 'permissions' block is not present
     if 'on' in content and 'permissions' not in content:
         # Add a blank line for readability
-        content['permissions'] = 'write-all'
+        content.insert(content.index('on') + 1, 'permissions', 'write-all')
 
         with open(file_path, 'w') as f:
             YAML().dump(content, f)
@@ -24,7 +24,7 @@ def process_workflow_files():
 
     for file_path in workflow_files:
         # Check if the file should be excluded
-        if any(fnmatch(os.path.basename(file_path), pattern) for pattern in exclude_patterns):
+        if any(fnmatch(file_path, pattern) for pattern in exclude_patterns):
             print(f"Skipping {file_path}")
             continue
 
