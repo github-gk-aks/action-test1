@@ -7,8 +7,8 @@ def add_permissions_block(file_path):
     with open(file_path, 'r') as f:
         content = YAML().load(f)
 
-    # Check if 'on' block exists and if 'permissions' block is not present in jobs
-    if 'on' in content and ('jobs' not in content or 'permissions' not in content['jobs']):
+    # Check if 'on' block exists and if 'permissions' block is not present at the top level
+    if 'on' in content and 'permissions' not in content:
         # Add a blank line for readability
         content['permissions'] = 'write-all'
 
