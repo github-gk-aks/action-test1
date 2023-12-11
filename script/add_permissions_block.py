@@ -38,6 +38,21 @@ def check_permissions_exist(data):
                 return True
     return False
 
+def find_on_index(data):
+    if isinstance(data, dict):
+        if 'on' in data:
+            return data.yaml_add_eol_comment("permissions: write-all", key='on', column=0)
+        for key, value in data.items():
+            index = find_on_index(value)
+            if index is not None:
+                return index
+    elif isinstance(data, list):
+        for idx, item in enumerate(data):
+            index = find_on_index(item)
+            if index is not None:
+                return index
+    return None
+
 if __name__ == "__main__":
     file_path = sys.argv[1]
     add_permissions_block(file_path)
