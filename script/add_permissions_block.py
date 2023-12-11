@@ -15,7 +15,6 @@ def add_permissions_block(file_path):
 
     # Insert a blank line after 'on' block
         yaml.comment_before_after_key('permissions', before='\n', indent=content.yaml_get_indention('on'))
-        yaml.comment_before_after_key('permissions', after='\n', indent=content.yaml_get_indention('on'))
 
         with open(file_path, 'w') as f:
             yaml.dump(content, f)
