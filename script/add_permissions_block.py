@@ -19,12 +19,17 @@ def add_permissions_block(file_path):
         if on_index is not None:
             if isinstance(data[on_index][1], dict):  # Check if 'on:' is followed by a dictionary
                 # Insert 'permissions' block under 'on:' block
-                data[on_index][1].insert(data[on_index][1].ca.items[0][1], 'permissions', 'write-all')
+                data[on_index][1].yaml_add_eol_comment("permissions: write-all", key='on', column=0)
                 with open(file_path, 'w') as file:
                     yaml.dump(data, file)
                 print(f"Added permissions block under 'on:' in {file_path}")
             else:
-                print("Existing 'on:' block is not a dictionary. Skipping...")
+                # Create a new dictionary for 'on:' block with 'permissions' block
+                new_on_block = {'permissions': 'write-all', 'trigger': data[on_index][1]}
+                data[on_index][1] = new_on_block
+                with open(file_path, 'w') as file:
+                    yaml.dump(data, file)
+                print(f"Modified 'on:' block by adding 'permissions' block in {file_path}")
         else:
             print("No 'on:' block found. Skipping...")
     else:
