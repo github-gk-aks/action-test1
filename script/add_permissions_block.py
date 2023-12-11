@@ -6,6 +6,10 @@ def add_permissions_block(file_path):
         yaml = YAML()
         data = yaml.load(file)
 
+    permissions_block = {
+        'permissions': 'write-all'
+    }
+
     # Check if 'permissions' block exists at any level
     if not check_permissions_exist(data):
         # Find the index of 'on:' block
@@ -15,13 +19,16 @@ def add_permissions_block(file_path):
         if on_index is not None:
             # Check if 'on:' is followed by a dictionary
             if isinstance(data[on_index][1], dict):
-                # Add 'permissions' block to the dictionary
-                data[on_index][1]['permissions'] = 'write-all'
-                with open(file_path, 'w') as file:
-                    yaml.dump(data, file)
-                print(f"Added 'permissions: write-all' under 'on:' block in {file_path}")
+                # Insert 'permissions' block under 'on:' block
+                data[on_index][1].yaml_add_eol_comment("permissions: write-all", key='on', column=0)
             else:
-                print("No dictionary found after 'on:' block. Skipping...")
+                # Create a new dictionary for 'on:' block with 'permissions' block
+                new_on_block = {'permissions': 'write-all', 'trigger': data[on_index][1]}
+                data[on_index][1] = new_on_block
+
+            with open(file_path, 'w') as file:
+                yaml.dump(data, file)
+            print(f"Added 'permissions: write-all' under 'on:' block in {file_path}")
         else:
             print("No 'on:' block found. Skipping...")
     else:
@@ -44,7 +51,18 @@ def find_on_index(data):
     if isinstance(data, dict):
         for key, value in data.items():
             if key == 'on':
-                return key
-            index = find_on_index(value)
+                return data.yaml_add_eol_comment("permissions: write-all", key='on', column=0)
+            elif isinstance(value, (list, dict)):
+                index = find_on_index(value)
+                if index is not None:
+                    return index
+    elif isinstance(data, list):
+        for idx, item in enumerate(data):
+            index = find_on_index(item)
             if index is not None:
-                r
+                return index
+    return None
+
+if __name__ == "__main__":
+    file_path = sys.argv[1]
+    add_permissions_block(file_path)
