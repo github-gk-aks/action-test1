@@ -6,10 +6,6 @@ def add_permissions_block(file_path):
         yaml = YAML()
         data = yaml.load(file)
 
-    permissions_block = {
-        'permissions': 'write-all'
-    }
-
     # Check if 'permissions' block exists at any level
     if not check_permissions_exist(data):
         # Find the index of 'on:' block
@@ -17,19 +13,14 @@ def add_permissions_block(file_path):
 
         # Insert 'permissions' block after 'on:' block
         if on_index is not None:
-            if isinstance(data[on_index][1], dict):  # Check if 'on:' is followed by a dictionary
-                # Insert 'permissions' block under 'on:' block
-                data[on_index][1].yaml_add_eol_comment("permissions: write-all", key='on', column=0)
+            # Check if 'on:' is followed by a dictionary
+            if isinstance(data[on_index][1], dict):
+                data[on_index][1]['permissions'] = 'write-all'
                 with open(file_path, 'w') as file:
                     yaml.dump(data, file)
-                print(f"Added permissions block under 'on:' in {file_path}")
+                print(f"Added 'permissions: write-all' under 'on:' block in {file_path}")
             else:
-                # Create a new dictionary for 'on:' block with 'permissions' block
-                new_on_block = {'permissions': 'write-all', 'trigger': data[on_index][1]}
-                data[on_index][1] = new_on_block
-                with open(file_path, 'w') as file:
-                    yaml.dump(data, file)
-                print(f"Modified 'on:' block by adding 'permissions' block in {file_path}")
+                print("No dictionary found after 'on:' block. Skipping...")
         else:
             print("No 'on:' block found. Skipping...")
     else:
@@ -50,9 +41,9 @@ def check_permissions_exist(data):
 
 def find_on_index(data):
     if isinstance(data, dict):
-        if 'on' in data:
-            return data.yaml_add_eol_comment("permissions: write-all", key='on', column=0)
-        for value in data.values():
+        for key, value in data.items():
+            if key == 'on':
+                return key
             index = find_on_index(value)
             if index is not None:
                 return index
@@ -62,8 +53,6 @@ def find_on_index(data):
             if index is not None:
                 return index
     return None
-
-
 
 if __name__ == "__main__":
     file_path = sys.argv[1]
