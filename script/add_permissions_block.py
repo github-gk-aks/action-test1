@@ -21,12 +21,15 @@ def add_permissions_block(file_path):
             jobs_index = find_jobs_index(data, on_index)
 
             if jobs_index is not None:
-                # Insert 'permissions' block after 'on:' and before 'jobs:' block
-                data.insert(jobs_index, 'permissions', 'write-all')
-                with open(file_path, 'w') as file:
-                    yaml.dump(data, file)
-
-                print(f"Added permissions block after 'on:' and before 'jobs:' block in {file_path}")
+                # Check if 'permissions' block exists inside 'jobs:'
+                if not check_permissions_exist(data[jobs_index]):
+                    # Insert 'permissions' block after 'on:' and before 'jobs:' block
+                    data[jobs_index].insert(0, 'permissions', 'write-all')
+                    with open(file_path, 'w') as file:
+                        yaml.dump(data, file)
+                    print(f"Added permissions block after 'on:' and before 'jobs:' block in {file_path}")
+                else:
+                    print("'permissions:' block already exists inside 'jobs:'. Skipping...")
             else:
                 print("No 'jobs:' block found after 'on:'. Skipping...")
         else:
