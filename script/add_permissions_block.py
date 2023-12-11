@@ -1,5 +1,5 @@
 import os
-import yaml
+from ruamel.yaml import YAML
 from glob import glob
 from fnmatch import fnmatch
 
