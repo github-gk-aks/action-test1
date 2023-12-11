@@ -22,7 +22,10 @@ def add_permissions_block(file_path):
 def insert_blank_line(data, key, anchor, yaml):
     if anchor in data and key in data:
         index = list(data.keys()).index(anchor) + 1
-        data.yaml_set_comment_before_after_key(key, before='\n', indent=data.yaml_get_indentation(anchor))
+        # Insert a blank line after 'on' block
+        yaml.default_flow_style = False
+        yaml.indent(offset=2, sequence=4, mapping=2)
+        data.yaml_set_comment_before_after_key(key, before='\n', indent=data.yaml_indent + 2)
         data.insert(index, key, data[key])
 
 def process_workflow_files():
