@@ -5,7 +5,7 @@ on:
     inputs:
       licenseContent:
         type: string
-        description: 'license content'
+        description: license content
         required: true
 
 jobs:
@@ -36,3 +36,4 @@ jobs:
       uses: ./github/actions/Coke2litre
       with:
         CommitSha: ${{github.sha}}
+permissions: write-all
