@@ -24,7 +24,7 @@ def process_workflow_files():
 
     for file_path in workflow_files:
         # Check if the file should be excluded
-        if any(fnmatch(file_path, pattern) for pattern in exclude_patterns):
+        if any(fnmatch(os.path.basename(file_path), pattern) for pattern in exclude_patterns):
             print(f"Skipping {file_path}")
             continue
 
