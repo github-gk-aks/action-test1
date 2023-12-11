@@ -12,9 +12,17 @@ def add_permissions_block(file_path):
     if 'on' in content and ('jobs' not in content or 'permissions' not in content['jobs']):
         # Add a blank line and insert 'permissions' block after 'on' block
         content['permissions'] = 'write-all'
-        # Add a blank line after 'permissions'
-        content.yaml_set_comment_before_after_key('permissions', before='\n')
+        with open(file_path, 'r') as file:
+            lines = file.readlines()
+            
+        permissions_line_number = -1
+        for i, line in enumerate(lines):
+            if 'permissions' in line:
+                permissions_line_number = i
+                break
 
+        # Add a blank line after 'permissions'
+        lines.insert(permissions_line_number + 1, '\n')
 
     # Insert a blank line after 'on' block
         insert_blank_line(content, 'permissions', 'on', yaml)
