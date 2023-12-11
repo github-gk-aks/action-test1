@@ -12,9 +12,16 @@ def add_permissions_block(file_path):
     if 'on' in content and ('jobs' not in content or 'permissions' not in content['jobs']):
         # Add a blank line and insert 'permissions' block after 'on' block
         content['permissions'] = 'write-all'
+
+    # Insert a blank line after 'on' block
+        insert_blank_line(content, 'permissions', 'on', yaml)
+
+        with open(file_path, 'w') as f:
+            yaml.dump(content, f)
+
         with open(file_path, 'r') as file:
             lines = file.readlines()
-            
+
         permissions_line_number = -1
         for i, line in enumerate(lines):
             if 'permissions' in line:
@@ -24,11 +31,8 @@ def add_permissions_block(file_path):
         # Add a blank line after 'permissions'
         lines.insert(permissions_line_number + 1, '\n')
 
-    # Insert a blank line after 'on' block
-        insert_blank_line(content, 'permissions', 'on', yaml)
-
-        with open(file_path, 'w') as f:
-            yaml.dump(content, f)
+        with open(file_path, 'w') as file:
+            file.writelines(lines)
 
 def insert_blank_line(data, key, anchor, yaml):
     if anchor in data and key in data:
