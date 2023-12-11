@@ -13,7 +13,7 @@ def add_permissions_block(file_path):
         content['permissions'] = 'write-all'
 
         with open(file_path, 'w') as f:
-            YAML().dump(content, f, default_flow_style=False)
+            YAML().dump(content, f)
 
 def process_workflow_files():
     # Get a list of all .yml files in the .github/workflows directory
