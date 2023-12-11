@@ -11,10 +11,11 @@ def add_permissions_block(file_path):
         # Find the index of 'on:' block
         on_index = find_on_index(data)
 
-        # Insert 'permissions' block after 'on:' block
+        # Insert 'permissions' block under 'on:' block
         if on_index is not None:
             # Check if 'on:' is followed by a dictionary
             if isinstance(data[on_index][1], dict):
+                # Add 'permissions' block to the dictionary
                 data[on_index][1]['permissions'] = 'write-all'
                 with open(file_path, 'w') as file:
                     yaml.dump(data, file)
@@ -46,14 +47,4 @@ def find_on_index(data):
                 return key
             index = find_on_index(value)
             if index is not None:
-                return index
-    elif isinstance(data, list):
-        for item in data:
-            index = find_on_index(item)
-            if index is not None:
-                return index
-    return None
-
-if __name__ == "__main__":
-    file_path = sys.argv[1]
-    add_permissions_block(file_path)
+                r
