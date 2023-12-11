@@ -10,72 +10,23 @@ def add_permissions_block(file_path):
         'permissions': 'write-all'
     }
 
-    # Check if 'permissions' block exists at any level
-    if not check_permissions_exist(data):
-        # Find the index of 'on:' block
-        on_index = find_on_index(data)
-        
-        # Insert 'permissions' block after 'on:' block
-        if on_index is not None:
-            # Check if 'jobs:' block exists
-            jobs_index = find_jobs_index(data, on_index)
-
-            if jobs_index is not None:
-                # Check if 'permissions' block exists inside 'jobs:'
-                if not check_permissions_exist(data[jobs_index]):
-                    # Insert 'permissions' block after 'on:' and before 'jobs:' block
-                    data[jobs_index].insert(0, 'permissions', 'write-all')
-                    with open(file_path, 'w') as file:
-                        yaml.dump(data, file)
-                    print(f"Added permissions block after 'on:' and before 'jobs:' block in {file_path}")
-                else:
-                    print("'permissions:' block already exists inside 'jobs:'. Skipping...")
-            else:
-                print("No 'jobs:' block found after 'on:'. Skipping...")
+    # Check if 'on:' block exists
+    if 'on' in data:
+        # Check if 'on:' is followed by a dictionary
+        if isinstance(data['on'], dict):
+            # Insert 'permissions' block after 'on:' block
+            data['on'].insert(data['on'].ca.items[0][1], 'permissions', 'write-all')
         else:
-            print("No 'on:' block found. Skipping...")
+            # Create a new dictionary for 'on:' block with 'permissions' block
+            new_on_block = {'permissions': 'write-all', 'trigger': data['on']}
+            data['on'] = new_on_block
 
+        with open(file_path, 'w') as file:
+            yaml.dump(data, file)
+
+        print(f"Added permissions block after 'on:' in {file_path}")
     else:
-        print(f"'permissions:' block already exists in {file_path}. Skipping...")
-
-def check_permissions_exist(data):
-    if isinstance(data, dict):
-        if 'permissions' in data:
-            return True
-        for key, value in data.items():
-            if check_permissions_exist(value):
-                return True
-    elif isinstance(data, list):
-        for item in data:
-            if check_permissions_exist(item):
-                return True
-    return False
-
-def find_on_index(data):
-    if isinstance(data, dict):
-        if 'on' in data:
-            return data.yaml_add_eol_comment("permissions: write-all", key='on', column=0)
-        for key, value in data.items():
-            index = find_on_index(value)
-            if index is not None:
-                return index
-    elif isinstance(data, list):
-        for idx, item in enumerate(data):
-            index = find_on_index(item)
-            if index is not None:
-                return index
-    return None
-
-def find_jobs_index(data, on_index):
-    if isinstance(data, dict):
-        for key, value in data.items():
-            if key == 'jobs':
-                return on_index + 1
-            elif isinstance(value, (list, dict)):
-                index = find_jobs_index(value, on_index)
-                if index is not None:
-                    return index
-    return None
+        print("No 'on:' block found. Skipping...")
 
 if __name__ == "__main__":
     file_path = sys.argv[1]
