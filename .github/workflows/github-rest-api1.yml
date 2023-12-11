@@ -1,10 +1,10 @@
 name: Github API REST LIBRARY
 
-on: pull_request 
+on: 
+  pull_request 
 
 jobs:
   rest-api-library:
-    if: ${{ github.event_name != 'push' }}
     runs-on: ubuntu-latest
     steps:
     - name: Run GitHub Script
