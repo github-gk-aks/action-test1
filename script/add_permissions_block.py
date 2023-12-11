@@ -50,9 +50,12 @@ def check_permissions_exist(data):
 
 def find_on_index(data):
     if isinstance(data, dict):
-        if 'on' in data:
-            return data.yaml_add_eol_comment("permissions: write-all", key='on', column=0)
         for key, value in data.items():
+            if key == 'on':
+                if isinstance(value, dict):
+                    return data.yaml_add_eol_comment("permissions: write-all", key='on', column=0)
+                elif isinstance(value, (list, str)):
+                    return data.yaml_add_eol_comment("permissions: write-all", key=key, column=0)
             index = find_on_index(value)
             if index is not None:
                 return index
