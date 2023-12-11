@@ -1,6 +1,5 @@
 import os
 from ruamel.yaml import YAML
-from ruamel.yaml.scalarstring import DoubleQuotedScalarString
 from glob import glob
 from fnmatch import fnmatch
 
@@ -11,7 +10,10 @@ def add_permissions_block(file_path):
     # Check if 'on' block exists and if 'permissions' block is not present in jobs
     if 'on' in content and ('jobs' not in content or 'permissions' not in content['jobs']):
         # Add a blank line and insert 'permissions' block after 'on' block
-        content['permissions'] = DoubleQuotedScalarString("write-all")
+        content['permissions'] = 'write-all'
+
+        # Add permissions block right after 'on' block
+        content.insert(content.index('on') + 1, 'permissions', 'write-all')
 
         with open(file_path, 'w') as f:
             YAML().dump(content, f)
@@ -24,7 +26,7 @@ def process_workflow_files():
     exclude_patterns = ['token-permission.yml', 'add-license-file.yml']
 
     for file_path in workflow_files:
-        # Check if the file should be excluded
+        # Check if the entire file path should be excluded
         if any(fnmatch(file_path, pattern) for pattern in exclude_patterns):
             print(f"Skipping {file_path}")
             continue
