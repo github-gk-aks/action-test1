@@ -9,6 +9,8 @@ def add_permissions_block(file_path):
 
     # Check if 'on' block exists and if 'permissions' block is not present in jobs
     if 'on' in content and ('jobs' not in content or 'permissions' not in content['jobs']):
+        # Insert a blank line after 'on' block
+        content.insert(content.index['on'] + 1, ' ', ' ')
         # Add a blank line and insert 'permissions' block after 'on' block
         content['permissions'] = 'write-all'
 
