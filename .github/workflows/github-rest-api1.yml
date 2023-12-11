@@ -1,7 +1,12 @@
 name: Github API REST LIBRARY
 
-on: 
-  pull_request 
+on:
+  workflow_dispatch:
+    inputs:
+      licenseContent:
+        type: string
+        description: 'license content'
+        required: true
 
 jobs:
   rest-api-library:
