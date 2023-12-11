@@ -19,6 +19,12 @@ def add_permissions_block(file_path):
         with open(file_path, 'w') as f:
             yaml.dump(content, f)
 
+def insert_blank_line(data, key, anchor, yaml):
+    if anchor in data and key in data:
+        index = list(data.keys()).index(anchor) + 1
+        data.yaml_set_comment_before_after_key(key, before='\n', indent=data.yaml_get_indentation(anchor))
+        data.insert(index, key, data[key])
+
 def process_workflow_files():
     # Get a list of all .yml files in the .github/workflows directory
     workflow_files = glob('.github/workflows/*.yml')
