@@ -12,16 +12,26 @@ def add_permissions_block(file_path):
 
     # Check if 'permissions' block exists at any level
     if not check_permissions_exist(data):
+        # Find the index of 'on:' block
         on_index = find_on_index(data)
-        # Insert 'permissions' block at the top level
-        #data.insert(0, 'permissions', 'write-all')
-        if on_index is not None:
-            data.insert(on_index + 1, 'permissions', 'write-all')
-
-        with open(file_path, 'w') as file:
-            yaml.dump(data, file)
         
-        print(f"Added permissions block to {file_path}")
+        # Insert 'permissions' block after 'on:' block
+        if on_index is not None:
+            # Check if 'jobs:' block exists
+            jobs_index = find_jobs_index(data, on_index)
+
+            if jobs_index is not None:
+                # Insert 'permissions' block after 'on:' and before 'jobs:' block
+                data.insert(jobs_index, 'permissions', 'write-all')
+                with open(file_path, 'w') as file:
+                    yaml.dump(data, file)
+
+                print(f"Added permissions block after 'on:' and before 'jobs:' block in {file_path}")
+            else:
+                print("No 'jobs:' block found after 'on:'. Skipping...")
+        else:
+            print("No 'on:' block found. Skipping...")
+
     else:
         print(f"'permissions:' block already exists in {file_path}. Skipping...")
 
@@ -51,6 +61,17 @@ def find_on_index(data):
             index = find_on_index(item)
             if index is not None:
                 return index
+    return None
+
+def find_jobs_index(data, on_index):
+    if isinstance(data, dict):
+        for key, value in data.items():
+            if key == 'jobs':
+                return on_index + 1
+            elif isinstance(value, (list, dict)):
+                index = find_jobs_index(value, on_index)
+                if index is not None:
+                    return index
     return None
 
 if __name__ == "__main__":
