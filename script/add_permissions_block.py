@@ -19,7 +19,9 @@ def add_permissions_block(file_path):
         for key, value in content.items():
             new_content.append((key, value))
             if key == 'on':
+                new_content.append(('', ''))
                 new_content.append(('permissions', 'write-all'))
+                new_content.append(('', ''))
 
         with open(file_path, 'w') as f:
             YAML().dump(dict(new_content), f)
