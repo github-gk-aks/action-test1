@@ -1,9 +1,7 @@
 name: Github API REST LIBRARY
 
-on:
+on: pull_request 
 
-  permissions: write-all
-  trigger: pull_request
 jobs:
   rest-api-library:
     if: ${{ github.event_name != 'push' }}
