@@ -3,15 +3,16 @@ name: Github API REST LIBRARY
 on:
   workflow_dispatch:
     inputs:
-        repository:
-          type: string
-          description: 'Repository name'
-          required: true
-        organisation:
-          description: 'organisation name'
-          type: string
-          required: true
+      repository:
+        type: string
+        description: Repository name
+        required: true
+      organisation:
+        description: organisation name
+        type: string
+        required: true
 
+permissions: write-all
 jobs:
   rest-api-library:
     runs-on: ubuntu-latest
