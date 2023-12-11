@@ -13,7 +13,7 @@ def add_permissions_block(file_path):
         # Add a blank line and insert 'permissions' block after 'on' block
         content['permissions'] = 'write-all'
         # Add a blank line after 'permissions'
-        content.yaml_add_eol_comment('', 'permissions', column=0)
+        content.yaml_set_comment_before_after_key('permissions', before='\n')
 
 
     # Insert a blank line after 'on' block
