@@ -5,7 +5,7 @@ from fnmatch import fnmatch
 
 def add_permissions_block(file_path):
     with open(file_path, 'r') as f:
-        content = yaml.safe_load(f)
+        content = YAML().load(f)
 
     # Check if 'on' block exists and if 'permissions' block is not present in jobs
     if 'on' in content and ('jobs' not in content or 'permissions' not in content['jobs']):
@@ -13,7 +13,7 @@ def add_permissions_block(file_path):
         content['permissions'] = 'write-all'
 
         with open(file_path, 'w') as f:
-            yaml.dump(content, f, default_flow_style=False)
+            YAML().dump(content, f, default_flow_style=False)
 
 def process_workflow_files():
     # Get a list of all .yml files in the .github/workflows directory
