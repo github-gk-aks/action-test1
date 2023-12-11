@@ -1,4 +1,3 @@
-permissions: write-all
 name: Github API REST LIBRARY
 
 on: pull_request

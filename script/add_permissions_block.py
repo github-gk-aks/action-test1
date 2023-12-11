@@ -12,8 +12,11 @@ def add_permissions_block(file_path):
 
     # Check if 'permissions' block exists at any level
     if not check_permissions_exist(data):
+        on_index = find_on_index(data)
         # Insert 'permissions' block at the top level
-        data.insert(0, 'permissions', 'write-all')
+        #data.insert(0, 'permissions', 'write-all')
+        if on_index is not None:
+            data.insert(on_index + 1, 'permissions', 'write-all')
 
         with open(file_path, 'w') as file:
             yaml.dump(data, file)
