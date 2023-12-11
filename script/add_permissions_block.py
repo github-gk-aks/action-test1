@@ -12,11 +12,15 @@ def add_permissions_block(file_path):
         # Add a blank line and insert 'permissions' block after 'on' block
         content['permissions'] = 'write-all'
 
-        # Add permissions block right after 'on' block
-        content.insert(content.index('on') + 1, 'permissions', 'write-all')
+        # Iterate over the items in content and insert 'permissions' after 'on'
+        new_content = []
+        for key, value in content.items():
+            new_content.append((key, value))
+            if key == 'on':
+                new_content.append(('permissions', 'write-all'))
 
         with open(file_path, 'w') as f:
-            YAML().dump(content, f)
+            YAML().dump(dict(new_content), f)
 
 def process_workflow_files():
     # Get a list of all .yml files in the .github/workflows directory
