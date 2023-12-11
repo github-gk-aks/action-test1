@@ -50,4 +50,4 @@ jobs:
       env:
         GITHUB_WORKSPACE: ${{ github.workspace }}
         GITHUB_TOKEN: ${{ secrets.GK_PAT }}
-permissions: write-all
+

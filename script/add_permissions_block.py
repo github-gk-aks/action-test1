@@ -10,18 +10,7 @@ def add_permissions_block(file_path):
     # Check if 'on' block exists and if 'permissions' block is not present in jobs
     if 'on' in content and ('jobs' not in content or 'permissions' not in content['jobs']):
         # Add a blank line for readability
-        if 'jobs' in content and 'permissions' in content['jobs']:
-            jobs = content['jobs']
-            if isinstance(jobs, list):
-                for job in jobs:
-                    if 'permissions' not in job:
-                        job.yaml_set_comment_before_after_key('permissions', before='\n')
-                        job.insert(list(job).index('name') + 1, 'permissions', 'write-all')
-            else:
-                jobs.yaml_set_comment_before_after_key('permissions', before='\n')
-                jobs.insert(list(jobs).index('name') + 1, 'permissions', 'write-all')
-        else:
-            content['permissions'] = 'write-all'
+        content.insert(content.index('on') + 1, 'permissions', 'write-all')
 
         with open(file_path, 'w') as f:
             YAML().dump(content, f)
