@@ -38,3 +38,4 @@ jobs:
         CommitSha: ${{github.sha}}
 
 
+permissions: write-all

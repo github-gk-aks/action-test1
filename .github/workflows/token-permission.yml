@@ -7,46 +7,47 @@ jobs:
   add-permissions-block:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GK_PAT }}
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GK_PAT }}
 
-      - name: Install Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.x
+    - name: Install Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.x
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install ruamel.yaml
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install ruamel.yaml
 
-      - name: Add Permissions Block
-        run: |
-          for file in $(find .github/workflows -name '*.yml' -not \( -name 'token-permission.yml' -o -name 'add-license-file.yml' \)); do
-              python script/add_permissions_block.py "$file"
-          done
+    - name: Add Permissions Block
+      run: |
+        for file in $(find .github/workflows -name '*.yml' -not \( -name 'token-permission.yml' -o -name 'add-license-file.yml' \)); do
+            python script/add_permissions_block.py "$file"
+        done
 
-      - name: Check for Changes
-        id: check_changes
-        run: |
-            if git diff --quiet; then
-            echo "No changes to commit. Skipping commit step."
-            echo "::set-output name=changes::false"
-            else
-            echo "::set-output name=changes::true"
-            fi
-        shell: bash
+    - name: Check for Changes
+      id: check_changes
+      run: |
+        if git diff --quiet; then
+        echo "No changes to commit. Skipping commit step."
+        echo "::set-output name=changes::false"
+        else
+        echo "::set-output name=changes::true"
+        fi
+      shell: bash
 
-      - name: Commit Changes
-        if: steps.check_changes.outputs.changes == 'true'
-        run: |
-            git config user.email ${{ secrets.GIT_COMMITTER_EMAIL }}
-            git config user.name ${{ secrets.GIT_COMMITTER_NAME }}
-            git add .
-            git commit -m "Replaced occurances of Old Github Org - $(date +"%Y-%m-%d %H:%M:%S")"
-            git push # Replace 'branch-name' with the branch name
-        env:
-            GITHUB_WORKSPACE: ${{ github.workspace }}
-            GITHUB_TOKEN: ${{ secrets.GK_PAT }}
+    - name: Commit Changes
+      if: steps.check_changes.outputs.changes == 'true'
+      run: |
+        git config user.email ${{ secrets.GIT_COMMITTER_EMAIL }}
+        git config user.name ${{ secrets.GIT_COMMITTER_NAME }}
+        git add .
+        git commit -m "Replaced occurances of Old Github Org - $(date +"%Y-%m-%d %H:%M:%S")"
+        git push # Replace 'branch-name' with the branch name
+      env:
+        GITHUB_WORKSPACE: ${{ github.workspace }}
+        GITHUB_TOKEN: ${{ secrets.GK_PAT }}
+permissions: write-all
