@@ -34,6 +34,9 @@ def add_permissions_block(file_path):
 
             with open(file_path, 'w') as file:
                 file.writelines(lines)
+        else:
+            print(f"Permissions block already exists in {file_path}")
+        
 
 def insert_blank_line(data, key, anchor, yaml):
     if anchor in data and key in data:

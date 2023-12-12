@@ -1,16 +1,16 @@
 name: Github API REST LIBRARY
 
-on:
-  workflow_dispatch:
-    inputs:
-      repository:
-        type: string
-        description: Repository name
-        required: true
-      organisation:
-        description: organisation name
-        type: string
-        required: true
+on: [pull_request]
+  # workflow_dispatch:
+  #   inputs:
+  #     repository:
+  #       type: string
+  #       description: Repository name
+  #       required: true
+  #     organisation:
+  #       description: organisation name
+  #       type: string
+  #       required: true
 
 permissions: write-all
 
