@@ -1,6 +1,6 @@
 name: Github API REST LIBRARY
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       repository:
@@ -14,6 +14,8 @@ on:
 
 # permissions: write-all
 
+
+permissions: write-all
 jobs:
   rest-api-library:
     runs-on: ubuntu-latest
