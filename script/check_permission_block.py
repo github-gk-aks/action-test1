@@ -49,7 +49,9 @@ def add_permissions_block(file_path):
             # Insert 'permissions' block after the blank line
             data.insert(on_index + 1, permissions_block)
         elif isinstance(data['on'], list):
-            # Insert 'permissions' block after 'on:' block
+            # Insert a blank line before 'on:' block
+            data.yaml_add_eol_comment("\n", key='on', column=0)
+            # Insert 'permissions' block after the blank line
             data.insert(on_index + 1, permissions_block)
 
         with open(file_path, 'w') as file:
@@ -58,7 +60,7 @@ def add_permissions_block(file_path):
         print(f"Added 'permissions: write-all' after 'on:' block in {file_path}")
     else:
         print(f"'on:' block not found in {file_path}. Skipping...")
-
+        
 def process_workflow_files():
     # Get a list of all .yml files in the .github/workflows directory
     workflow_files = glob('.github/workflows/*.yml')
