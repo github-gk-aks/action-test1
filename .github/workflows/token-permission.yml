@@ -22,9 +22,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install ruamel.yaml
 
-        - name: Add Permissions Block
-        id: add_permissions
-        run: |
+    - name: Add Permissions Block
+      id: add_permissions
+      run: |
           for file in $(find .github/workflows -name '*.yml' -not \( -name 'token-permission.yml' \)); do
               python script/check_permission_block.py "$file"
           done
