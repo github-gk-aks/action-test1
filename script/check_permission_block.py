@@ -37,7 +37,15 @@ def add_permissions_block(file_path):
 
     # Check if 'on' block exists
     if 'on' in data:
-        on_position = data.ca.items['on'][0].start_mark.line
+        # Check if 'on' block is a dictionary
+        if isinstance(data['on'], yaml.comments.CommentedMap):
+            on_position = data.ca.items['on'][0].start_mark.line
+        # Check if 'on' block is a list
+        elif isinstance(data['on'], yaml.comments.CommentedSeq):
+            on_position = data.ca.items['on'][0].start_mark.line
+        else:
+            print(f"'on' block is not a dictionary or list in {file_path}. Skipping...")
+            return
 
         # Check if 'jobs' block exists
         if 'jobs' in data:
