@@ -24,13 +24,10 @@ def check_permissions_block(file_path):
                 permissions_found = 'Y'
             else:
                 print(f"Permissions block not found in job '{job_name}' in {file_path}")
+                
+    return permissions_found
     
-    if permissions_found == 'N':
-        print(f"Permissions block not found in {file_path}")
-        print("::set-output name=permissions_found::true")
-    else:
-        print("::set-output name=permissions_found::false")
-
+    
 def process_workflow_files():
     # Get a list of all .yml files in the .github/workflows directory
     workflow_files = glob('.github/workflows/*.yml')
@@ -47,7 +44,13 @@ def process_workflow_files():
             print(f"Skipping {file_path}")
             continue
 
-        check_permissions_block(file_path)
+        permissions_found = check_permissions_block(file_path)
+        if permissions_found == 'N':
+            print(f"Permissions block not found in {file_path}")
+            print("::set-output name=permissions_found::true")
+        else:
+            print("::set-output name=permissions_found::false")
 
 if __name__ == "__main__":
     process_workflow_files()
+

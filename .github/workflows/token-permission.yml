@@ -22,20 +22,27 @@ jobs:
         python -m pip install --upgrade pip
         pip install ruamel.yaml
 
-    - name: Add Permissions Block
+        - name: Add Permissions Block
+        id: add_permissions
+        run: |
+          for file in $(find .github/workflows -name '*.yml' -not \( -name 'token-permission.yml' \)); do
+              python script/check_permission_block.py "$file"
+          done
+  
+    - name: Check for Permissions
+      id: check_permissions
       run: |
-        for file in $(find .github/workflows -name '*.yml' -not \( -name 'token-permission.yml' -o -name 'add-license-file.yml' \)); do
-        permissions_found=$(python script/check_permission_block.py "$file")
-          if [ "$permissions_found" == "true" ]; then
-            echo "Permissions block found. Continuing..."
-          elif [ "$permissions_found" == "false" ]; then
+          echo "Permissions found: ${{ steps.add_permissions.outputs.permissions_found }}"
+
+    - name: Take Action based on Permissions
+      run: |
+          if [ "${{ steps.check_permissions.outputs.permissions_found }}" == "true" ]; then
             echo "Permissions block not found. Adding permissions block..."
-            sed -i '/^jobs:/i \npermissions : write-all' "$file" || true
+            sed -i '/^jobs:/i \npermissions : write-all' "$file"
           else
-            echo "Error in checking permissions block."
-            exit 1
+            echo "Permissions block found. Continuing..."
           fi
-        done
+      shell: bash
 
     - name: Check for Changes
       id: check_changes
