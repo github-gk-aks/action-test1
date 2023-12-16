@@ -1,5 +1,5 @@
 import os
-from ruamel.yaml import YAML, comments
+from ruamel.yaml import YAML, scalarstring
 from glob import glob
 from fnmatch import fnmatch
 
@@ -42,30 +42,22 @@ def add_permissions_block(file_path):
         # Find the index of 'on' block
         on_index = list(data).index('on')
 
-        # Insert 'permissions' block after 'on' block
-        data['permissions'] = permissions_block
- 
+        # Check if 'on' is a dictionary or a list
+        if isinstance(data['on'], dict):
+            # Insert a blank line before 'on:' block
+            data.yaml_add_eol_comment("\n", key='on', column=0)
+            # Insert 'permissions' block after the blank line
+            data.insert(on_index + 1, permissions_block)
+        elif isinstance(data['on'], list):
+            # Insert 'permissions' block after 'on:' block
+            data.insert(on_index + 1, permissions_block)
+
         with open(file_path, 'w') as file:
             yaml.dump(data, file)
 
         print(f"Added 'permissions: write-all' after 'on:' block in {file_path}")
     else:
         print(f"'on:' block not found in {file_path}. Skipping...")
-
-
-# def insert_blank_line(data, key, anchor, yaml):
-#     if anchor in data and key in data:
-#         index = list(data.keys()).index(anchor) + 1
-#         # Insert a blank line after the specified key only if it's not the last key
-#         if index < len(data) and key in data.ca.items:
-#             indent = data.ca.items[key][0].start_mark.column
-#             data.yaml_set_comment_before_after_key(key, before='\n', indent=indent)
-#             data.insert(index, key, data[key])
-#     elif key not in data:
-#         # Insert a new key with a blank line after the anchor
-#         index = list(data.keys()).index(anchor) + 1
-#         data.insert(index, key, "")
-
 
 def process_workflow_files():
     # Get a list of all .yml files in the .github/workflows directory
