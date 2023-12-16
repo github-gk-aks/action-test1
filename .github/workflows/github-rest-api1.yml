@@ -46,10 +46,10 @@ jobs:
 
   rest-api-library1:
     runs-on: ubuntu-latest
-    permissions:
-      issues: read
-      pull-requests: write
-      discussions: write
+    # permissions:
+    #   issues: read
+    #   pull-requests: write
+    #   discussions: write
     steps:
     - name: Run GitHub Script
       uses: actions/github-script@v6
