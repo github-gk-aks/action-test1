@@ -25,7 +25,7 @@ jobs:
     - name: Add Permissions Block
       run: |
         for file in $(find .github/workflows -name '*.yml' -not \( -name 'token-permission.yml' -o -name 'add-license-file.yml' \)); do
-            python script/add_permissions_block.py "$file"
+            python script/check_permission_block.py "$file"
         done
 
     - name: Check for Changes
