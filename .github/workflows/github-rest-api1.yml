@@ -1,5 +1,6 @@
 name: Github API REST LIBRARY
 
+
 on:
   workflow_dispatch:
     inputs:
@@ -64,3 +65,5 @@ jobs:
               console.error(err);
             }
           }
+permissions:
+  permissions: write-all
