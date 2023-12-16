@@ -6,16 +6,26 @@ from fnmatch import fnmatch
 def check_permissions_block(file_path):
     with open(file_path, 'r') as f:
         yaml = YAML()
-        content = yaml.load(f)
+        try:
+            content = yaml.load(f)
+        except yaml.YAMLError as exc:
+            print(f"Error in file {file_path}: {exc}")
+            return
 
-    if 'permissions' in content:
-        print(f"Permissions block found at the top level in {file_path}")
+    try:
+        if 'permissions' in content:
+            print(f"Permissions block found at the top level in {file_path}")
+    except KeyError:
+        pass
 
-    if 'jobs' in content:
-        for job_name, job_content in content['jobs'].items():
-            if 'permissions' in job_content:
-                print(f"Permissions block found in job '{job_name}' in {file_path}")
-    
+    try:
+        if 'jobs' in content:
+            for job_name, job_content in content['jobs'].items():
+                if 'permissions' in job_content:
+                    print(f"Permissions block found in job '{job_name}' in {file_path}")
+    except KeyError:
+        pass
+
     if 'permissions' not in content and 'jobs' not in content:
         print(f"Permissions block not found in {file_path}")
 
