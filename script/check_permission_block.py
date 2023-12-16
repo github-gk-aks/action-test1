@@ -42,12 +42,12 @@ def add_permissions_block(file_path):
         on_index = list(data).index('on')
 
         # Check if 'on' is a dictionary
-        if isinstance(data['on'], dict):
+        if isinstance(data['on'], comments.CommentedMap):
             # Insert a blank line after 'on:' block
             data.yaml_add_eol_comment('\n', key='on', column=0)
 
             # Insert 'permissions' block after the blank line
-            data.insert(on_index + 1, permissions_block)
+            data['on'].insert(on_index + 1, **permissions_block)
 
         # Check if 'on' is a list
         elif isinstance(data['on'], list):
