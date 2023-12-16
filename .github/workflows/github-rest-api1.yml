@@ -12,9 +12,6 @@ on:
         type: string
         required: true
 
-
-
-permissions : write-all
 jobs:
   rest-api-library:
     runs-on: ubuntu-latest
@@ -67,4 +64,3 @@ jobs:
               console.error(err);
             }
           }
-
