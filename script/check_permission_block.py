@@ -24,7 +24,7 @@ def check_permissions_block(file_path):
                 permissions_found = 'Y'
             else:
                 print(f"Permissions block not found in job '{job_name}' in {file_path}")
-                
+
     return permissions_found
     
     
@@ -47,9 +47,9 @@ def process_workflow_files():
         permissions_found = check_permissions_block(file_path)
         if permissions_found == 'N':
             print(f"Permissions block not found in {file_path}")
-            print("::set-output name=permissions_found::true")
-        else:
             print("::set-output name=permissions_found::false")
+        else:
+            print("::set-output name=permissions_found::true")
 
 if __name__ == "__main__":
     process_workflow_files()
