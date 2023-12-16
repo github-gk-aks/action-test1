@@ -35,21 +35,23 @@ def add_permissions_block(file_path):
 
     permissions_block = {'permissions': 'write-all'}
 
-    if 'on' in data:
-        if isinstance(data['on'], list):
-            # If 'on' is a list, add permissions after 'on'
-            data['on'].append(permissions_block)
-        elif isinstance(data['on'], dict):
-            # If 'on' is a dictionary, add permissions after 'on' with a line break
-            data.yaml_set_comment_before_after_key('on', before='\n')
+    if 'on' in data and 'jobs' in data:
+        on_position = data.ca.items['on'][0].start_mark.line
+        jobs_position = data.ca.items['jobs'][0].start_mark.line
+
+        if on_position < jobs_position:
+            # Insert permissions block between 'on:' and 'jobs:'
+            data.yaml_set_comment_before_after_key('jobs', before='\n')
             data['permissions'] = permissions_block
 
-        with open(file_path, 'w') as file:
-            yaml.dump(data, file)
-        
-        print(f"Added 'permissions: write-all' after 'on' block in {file_path}")
+            with open(file_path, 'w') as file:
+                yaml.dump(data, file)
+
+            print(f"Added 'permissions: write-all' between 'on' and 'jobs' in {file_path}")
+        else:
+            print(f"Could not find a valid position for 'permissions' block in {file_path}. Skipping...")
     else:
-        print(f"'on:' block not found in {file_path}. Skipping...")
+        print(f"'on' or 'jobs' block not found in {file_path}. Skipping...")
 
 def process_workflow_files():
     # Get a list of all .yml files in the .github/workflows directory

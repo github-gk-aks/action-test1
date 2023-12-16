@@ -65,5 +65,4 @@ jobs:
               console.error(err);
             }
           }
-permissions:
-  permissions: write-all
+
