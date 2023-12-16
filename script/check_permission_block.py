@@ -2,7 +2,6 @@ import os
 from ruamel.yaml import YAML
 from glob import glob
 from fnmatch import fnmatch
-from ruamel.yaml.scalarstring import CommentToken
 
 def check_permissions_block(file_path):
     with open(file_path, 'r') as f:
