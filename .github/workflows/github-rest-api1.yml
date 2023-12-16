@@ -12,7 +12,6 @@ on:
         type: string
         required: true
 
-//npermissions : write-all
 jobs:
   rest-api-library:
     runs-on: ubuntu-latest
