@@ -39,23 +39,27 @@ def add_permissions_block(file_path):
 
     # Check if 'on' block exists
     if 'on' in data:
-        # Find the index of 'on' block
         on_index = list(data).index('on')
 
-        # Insert a blank line before 'on:' block
-        data.insert(on_index, scalarstring.CommentToken('\n', None, None))
-        
-        # Insert 'permissions' block after the blank line
-        data.insert(on_index + 1, permissions_block)
+        # Check if 'on' is a dictionary
+        if isinstance(data['on'], dict):
+            # Insert a blank line after 'on:' block
+            data.yaml_add_eol_comment('\n', key='on', column=0)
+
+            # Insert 'permissions' block after the blank line
+            data.insert(on_index + 1, permissions_block)
+
+        # Check if 'on' is a list
+        elif isinstance(data['on'], list):
+            # Insert 'permissions' block after 'on:' block
+            data['on'].append(permissions_block)
 
         with open(file_path, 'w') as file:
             yaml.dump(data, file)
         
-        print(f"Added 'permissions: write-all' after a blank line before 'on:' block in {file_path}")
+        print(f"Added 'permissions: write-all' after 'on:' block in {file_path}")
     else:
         print(f"'on:' block not found in {file_path}. Skipping...")
-
-
 
 # def insert_blank_line(data, key, anchor, yaml):
 #     if anchor in data and key in data:
