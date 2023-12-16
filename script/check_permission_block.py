@@ -47,7 +47,8 @@ def add_permissions_block(file_path):
             data.yaml_add_eol_comment('\n', key='on', column=0)
 
             # Insert 'permissions' block after the blank line
-            data['on'].insert(on_index + 1, permissions_block)
+            data['on'].yaml_add_eol_comment('\n', key='permissions', column=0)
+            data['on'].update(permissions_block)
 
         # Check if 'on' is a list
         elif isinstance(data['on'], list):
