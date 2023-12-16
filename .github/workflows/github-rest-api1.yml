@@ -12,7 +12,7 @@ on:
         type: string
         required: true
 
-permissions: write-all
+#permissions: write-all
 
 jobs:
   rest-api-library:

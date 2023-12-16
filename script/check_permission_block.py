@@ -8,8 +8,11 @@ def check_permissions_block(file_path):
         yaml = YAML()
         content = yaml.load(f)
 
+    permissions_found = 'N'
+
     if 'permissions' in content:
         print(f"Permissions block found at the top level in {file_path}")
+        permissions_found = 'Y'
     else:
         print(f"Permission block not found at top level")
 
@@ -17,9 +20,13 @@ def check_permissions_block(file_path):
         for job_name, job_content in content['jobs'].items():
             if 'permissions' in job_content:
                 print(f"Permissions block found in job '{job_name}' in {file_path}")
+                permissions_found = 'Y'
             else:
                 print(f"Permissions block not found in job '{job_name}' in {file_path}")
     
+    if permissions_found == 'N':
+        print(f"Permissions block not found in {file_path}")
+
     if 'permissions' not in content and 'jobs' not in content:
         print(f"Permissions block not found in {file_path}")
 
