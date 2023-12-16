@@ -30,11 +30,11 @@ def check_permissions_block(file_path):
         content['permissions'] = 'write-all'
 
     # Insert a blank line after 'on' block
-        insert_blank_line(content, 'permissions', 'on', yaml)
-        insert_blank_line(content, 'jobs', 'permissions', yaml)
-
         with open(file_path, 'w') as f:
             yaml.dump(content, f)
+
+        insert_blank_line(content, 'permissions', 'on', yaml)
+        insert_blank_line(content, 'jobs', 'permissions', yaml)
 
 def insert_blank_line(data, key, anchor, yaml):
     if anchor in data and key in data:
