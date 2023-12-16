@@ -26,13 +26,33 @@ def check_permissions_block(file_path):
     
     if permissions_found == 'N':
         print(f"Permissions block not found in {file_path}")
-        # Add a blank line and insert 'permissions' block after 'on' block
-        content['permissions'] = 'write-all'
+        add_permissions_block(file_path)
+ 
+def add_permissions_block(file_path):
+    with open(file_path, 'r') as file:
+        yaml = YAML()
+        data = yaml.load(file)
 
-    # Insert a blank line after 'on' block
-        with open(file_path, 'w') as f:
-            yaml.dump(content, f)
+    permissions_block = {
+        'permissions': 'write-all'
+    }
+
+    # Check if 'on' block exists
+    if 'on' in data:
+        # Find the index of 'on' block
+        on_index = list(data).index('on') + 1
+
+        # Insert a line break before 'permissions' block
+        data.insert(on_index, ruamel.yaml.comments.CommentToken('\n\n', ruamel.yaml.error.CommentMark(0), None))
+        # Insert 'permissions' block after 'on' block
+        data.insert(on_index + 1, permissions_block)
+
+        with open(file_path, 'w') as file:
+            yaml.dump(data, file)
         
+        print(f"Added 'permissions: write-all' between 'on:' and 'jobs:' blocks in {file_path}")
+    else:
+        print(f"'on:' block not found in {file_path}. Skipping...")
 
 
 # def insert_blank_line(data, key, anchor, yaml):
