@@ -1,5 +1,5 @@
 import os
-from ruamel.yaml import YAML, scalarstring
+from ruamel.yaml import YAML
 from glob import glob
 from fnmatch import fnmatch
 
@@ -33,27 +33,21 @@ def add_permissions_block(file_path):
         yaml = YAML()
         data = yaml.load(file)
 
-    permissions_block = {
-        'permissions': 'write-all'
-    }
+    permissions_block = {'permissions': 'write-all'}
 
-    # Check if 'on' block exists
     if 'on' in data:
-        on_block = data['on']
-
-        # Check if 'on' block is a list
-        if isinstance(on_block, list):
-            # If 'on' is a list, add 'permissions' as a new item
-            data.insert(data.ca.items['on'][0].end_mark.line, permissions_block, key='on')
-        elif isinstance(on_block, dict):
-            # If 'on' is a dictionary, add 'permissions' to it
-            data.yaml_add_eol_comment("\n", key='on', column=0)
-            data.insert(data.ca.items['on'][0].end_mark.line + 1, permissions_block, key='on')
+        if isinstance(data['on'], list):
+            # If 'on' is a list, add permissions after 'on'
+            data['on'].append(permissions_block)
+        elif isinstance(data['on'], dict):
+            # If 'on' is a dictionary, add permissions after 'on' with a line break
+            data.yaml_set_comment_before_after_key('on', before='\n')
+            data['permissions'] = permissions_block
 
         with open(file_path, 'w') as file:
             yaml.dump(data, file)
         
-        print(f"Added 'permissions: write-all' in {file_path}")
+        print(f"Added 'permissions: write-all' after 'on' block in {file_path}")
     else:
         print(f"'on:' block not found in {file_path}. Skipping...")
 
