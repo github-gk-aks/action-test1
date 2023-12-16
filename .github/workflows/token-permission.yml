@@ -36,7 +36,7 @@ jobs:
 
     - name: Take Action based on Permissions
       run: |
-          if [ "${{ steps.check_permissions.outputs.permissions_found }}" == "false" ]; then
+          if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
             echo "Permissions block not found. Adding permissions block..."
             sed -i '/^jobs:/i \npermissions : write-all' "$file"
           else
