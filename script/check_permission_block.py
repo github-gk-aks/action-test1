@@ -35,33 +35,30 @@ def add_permissions_block(file_path):
 
     permissions_block = {'permissions': 'write-all'}
 
-    if 'on' in data and 'jobs' in data:
-        # Check if 'on' is a dictionary
-        if isinstance(data['on'], dict):
-            on_position = data.ca.items['on'][0].start_mark.line
-        # Check if 'on' is a list
-        elif isinstance(data['on'], list):
-            on_position = data.ca.items['on'][0].start_mark.line
-        else:
-            print(f"Invalid 'on' block in {file_path}. Skipping...")
-            return
+    # Check if 'on' block exists
+    if 'on' in data:
+        on_position = data.ca.items['on'][0].start_mark.line
 
-        jobs_position = data.ca.items['jobs'][0].start_mark.line
+        # Check if 'jobs' block exists
+        if 'jobs' in data:
+            jobs_position = data.ca.items['jobs'][0].start_mark.line
 
-        if on_position < jobs_position:
             # Insert permissions block between 'on:' and 'jobs:'
-            data.yaml_set_comment_before_after_key('jobs', before='\n')
-            data['permissions'] = permissions_block
+            if on_position < jobs_position:
+                data.yaml_set_comment_before_after_key('jobs', before='\n')
+                data['permissions'] = permissions_block
 
-            with open(file_path, 'w') as file:
-                yaml.dump(data, file)
+                with open(file_path, 'w') as file:
+                    yaml.dump(data, file)
 
-            print(f"Added 'permissions: write-all' between 'on' and 'jobs' in {file_path}")
+                print(f"Added 'permissions: write-all' between 'on' and 'jobs' in {file_path}")
+            else:
+                print(f"Could not find a valid position for 'permissions' block in {file_path}. Skipping...")
         else:
-            print(f"Could not find a valid position for 'permissions' block in {file_path}. Skipping...")
+            print(f"'jobs' block not found in {file_path}. Skipping...")
     else:
-        print(f"'on' or 'jobs' block not found in {file_path}. Skipping...")
-        
+        print(f"'on' block not found in {file_path}. Skipping...")
+
 def process_workflow_files():
     # Get a list of all .yml files in the .github/workflows directory
     workflow_files = glob('.github/workflows/*.yml')
