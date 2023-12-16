@@ -13,7 +13,6 @@ on:
         required: true
 
 jobs:
-      permissions: write-all
   rest-api-library:
     runs-on: ubuntu-latest
     # permissions:
