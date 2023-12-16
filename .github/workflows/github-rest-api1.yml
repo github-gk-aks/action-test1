@@ -46,24 +46,24 @@ jobs:
       with:
         CommitSha: ${{github.sha}}
 
-  rest-api-library1:
-    runs-on: ubuntu-latest
-    # permissions:
-    #   issues: read
-    #   pull-requests: write
-    #   discussions: write
-    steps:
-    - name: Run GitHub Script
-      uses: actions/github-script@v6
-      with:
-        script: |
-          for (const id in github.rest.repos) {
-            try {
-              if (typeof github.rest.repos[id] === "function") {
-                console.log(id);
-              }
-            } catch (err) {
-              console.error(err);
-            }
-          }
+  # rest-api-library1:
+  #   runs-on: ubuntu-latest
+  #   # permissions:
+  #   #   issues: read
+  #   #   pull-requests: write
+  #   #   discussions: write
+  #   steps:
+  #   - name: Run GitHub Script
+  #     uses: actions/github-script@v6
+  #     with:
+  #       script: |
+  #         for (const id in github.rest.repos) {
+  #           try {
+  #             if (typeof github.rest.repos[id] === "function") {
+  #               console.log(id);
+  #             }
+  #           } catch (err) {
+  #             console.error(err);
+  #           }
+  #         }
 
