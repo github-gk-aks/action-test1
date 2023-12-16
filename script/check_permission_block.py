@@ -10,6 +10,8 @@ def check_permissions_block(file_path):
 
     if 'permissions' in content:
         print(f"Permissions block found at the top level in {file_path}")
+    else:
+        print(f"Permission block not found at top level")
 
     if 'jobs' in content:
         for job_name, job_content in content['jobs'].items():
