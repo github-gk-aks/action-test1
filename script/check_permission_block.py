@@ -39,20 +39,19 @@ def add_permissions_block(file_path):
 
     # Check if 'on' block exists
     if 'on' in data:
-        # Insert a line break before 'permissions' block
-        on_index = data.yaml_add_eol_comment("\n", key='on', column=0)
+        # Find the index of 'on' block
+        on_index = list(data).index('on')
 
-        # Check if 'on_index' is not None before using it
-        if on_index is not None:
-            # Insert 'permissions' block after 'on' block
-            data.insert(on_index + 1, permissions_block)
+        # Insert a blank line before 'on:' block
+        data.insert(on_index, scalarstring.CommentToken('\n', None, None))
+        
+        # Insert 'permissions' block after the blank line
+        data.insert(on_index + 1, permissions_block)
 
-            with open(file_path, 'w') as file:
-                yaml.dump(data, file)
-            
-            print(f"Added 'permissions: write-all' after 'on:' block in {file_path}")
-        else:
-            print(f"Could not find a valid position for 'permissions' block in {file_path}. Skipping...")
+        with open(file_path, 'w') as file:
+            yaml.dump(data, file)
+        
+        print(f"Added 'permissions: write-all' after a blank line before 'on:' block in {file_path}")
     else:
         print(f"'on:' block not found in {file_path}. Skipping...")
 
