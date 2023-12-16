@@ -2,6 +2,7 @@ import os
 from ruamel.yaml import YAML
 from glob import glob
 from fnmatch import fnmatch
+from ruamel.yaml.scalarstring import CommentToken
 
 def check_permissions_block(file_path):
     with open(file_path, 'r') as f:
@@ -38,22 +39,22 @@ def add_permissions_block(file_path):
     # Check if 'on' block exists
     if 'on' in data:
         # Check if 'on' block is a dictionary
-        if isinstance(data['on'], yaml.comments.CommentedMap):
-            on_position = data.ca.items['on'][0].start_mark.line
+        if isinstance(data['on'], dict):
+            on_position = data['on'].lc.line + 1
         # Check if 'on' block is a list
-        elif isinstance(data['on'], yaml.comments.CommentedSeq):
-            on_position = data.ca.items['on'][0].start_mark.line
+        elif isinstance(data['on'], list):
+            on_position = data['on'].lc.line + 1
         else:
             print(f"'on' block is not a dictionary or list in {file_path}. Skipping...")
             return
 
         # Check if 'jobs' block exists
         if 'jobs' in data:
-            jobs_position = data.ca.items['jobs'][0].start_mark.line
+            jobs_position = data['jobs'].lc.line
 
             # Insert permissions block between 'on:' and 'jobs:'
             if on_position < jobs_position:
-                data.yaml_set_comment_before_after_key('jobs', before='\n')
+                data.yaml_set_comment_before_after_key('jobs', before=CommentToken('\n', None, None))
                 data['permissions'] = permissions_block
 
                 with open(file_path, 'w') as file:
