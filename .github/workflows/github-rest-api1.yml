@@ -66,3 +66,6 @@ jobs:
             }
           }
 
+
+permissions:
+  permissions: write-all
