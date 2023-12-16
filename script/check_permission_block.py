@@ -38,31 +38,18 @@ def add_permissions_block(file_path):
 
     # Check if 'on' block exists
     if 'on' in data:
-        # Check if 'on' block is a dictionary
-        if isinstance(data['on'], dict):
-            on_position = data['on'].lc.line + 1
-        # Check if 'on' block is a list
-        elif isinstance(data['on'], list):
-            on_position = data['on'].lc.line + 1
-        else:
-            print(f"'on' block is not a dictionary or list in {file_path}. Skipping...")
-            return
-
         # Check if 'jobs' block exists
         if 'jobs' in data:
-            jobs_position = data['jobs'].lc.line
+            # Insert a blank line before 'jobs' block
+            data.yaml_set_comment_before_after_key('jobs', before='\n', indent=0)
+            # Insert 'permissions' block after the blank line
+            data.yaml_set_comment_before_after_key('permissions', before='\n', indent=0)
+            data['permissions'] = permissions_block
 
-            # Insert permissions block between 'on:' and 'jobs:'
-            if on_position < jobs_position:
-                data.yaml_set_comment_before_after_key('jobs', before=CommentToken('\n', None, None))
-                data['permissions'] = permissions_block
+            with open(file_path, 'w') as file:
+                yaml.dump(data, file)
 
-                with open(file_path, 'w') as file:
-                    yaml.dump(data, file)
-
-                print(f"Added 'permissions: write-all' between 'on' and 'jobs' in {file_path}")
-            else:
-                print(f"Could not find a valid position for 'permissions' block in {file_path}. Skipping...")
+            print(f"Added 'permissions: write-all' after a blank line before 'jobs' in {file_path}")
         else:
             print(f"'jobs' block not found in {file_path}. Skipping...")
     else:
