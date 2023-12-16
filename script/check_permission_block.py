@@ -36,7 +36,16 @@ def add_permissions_block(file_path):
     permissions_block = {'permissions': 'write-all'}
 
     if 'on' in data and 'jobs' in data:
-        on_position = data.ca.items['on'][0].start_mark.line
+        # Check if 'on' is a dictionary
+        if isinstance(data['on'], dict):
+            on_position = data.ca.items['on'][0].start_mark.line
+        # Check if 'on' is a list
+        elif isinstance(data['on'], list):
+            on_position = data.ca.items['on'][0].start_mark.line
+        else:
+            print(f"Invalid 'on' block in {file_path}. Skipping...")
+            return
+
         jobs_position = data.ca.items['jobs'][0].start_mark.line
 
         if on_position < jobs_position:
@@ -52,7 +61,7 @@ def add_permissions_block(file_path):
             print(f"Could not find a valid position for 'permissions' block in {file_path}. Skipping...")
     else:
         print(f"'on' or 'jobs' block not found in {file_path}. Skipping...")
-
+        
 def process_workflow_files():
     # Get a list of all .yml files in the .github/workflows directory
     workflow_files = glob('.github/workflows/*.yml')
