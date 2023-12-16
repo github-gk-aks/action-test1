@@ -26,10 +26,38 @@ def check_permissions_block(file_path):
     
     if permissions_found == 'N':
         print(f"Permissions block not found in {file_path}")
-        content.insert(content.index('on') + 1, 'permissions', 'write-all')
+        # Add a blank line and insert 'permissions' block after 'on' block
+        content['permissions'] = 'write-all'
+
+    # Insert a blank line after 'on' block
+        insert_blank_line(content, 'permissions', 'on', yaml)
+
         with open(file_path, 'w') as f:
             yaml.dump(content, f)
-            print(f"Added 'permissions: write-all' at the top level in {file_path}")
+
+        with open(file_path, 'r') as file:
+            lines = file.readlines()
+
+        permissions_line_number = -1
+        for i, line in enumerate(lines):
+            if 'permissions' in line:
+                permissions_line_number = i
+                break
+
+        # Add a blank line after 'permissions'
+        lines.insert(permissions_line_number + 1, '\n')
+
+        with open(file_path, 'w') as file:
+            file.writelines(lines)
+
+def insert_blank_line(data, key, anchor, yaml):
+    if anchor in data and key in data:
+        index = list(data.keys()).index(anchor) + 1
+        # Insert a blank line after 'permissions' only if it's not the last key
+        if index < len(data) and key in data.ca.items:
+            indent = data.ca.items[key][0].start_mark.column
+            data.yaml_set_comment_before_after_key(key, before='\n', indent=indent)
+        data.insert(index, key, data[key])
 
 def process_workflow_files():
     # Get a list of all .yml files in the .github/workflows directory
