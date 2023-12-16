@@ -1,16 +1,16 @@
 name: Github API REST LIBRARY
 
-on: [pull_request]
-  # workflow_dispatch:
-  #   inputs:
-  #     repository:
-  #       type: string
-  #       description: Repository name
-  #       required: true
-  #     organisation:
-  #       description: organisation name
-  #       type: string
-  #       required: true
+on:
+  workflow_dispatch:
+    inputs:
+      repository:
+        type: string
+        description: Repository name
+        required: true
+      organisation:
+        description: organisation name
+        type: string
+        required: true
 
 jobs:
   rest-api-library:
@@ -64,4 +64,3 @@ jobs:
               console.error(err);
             }
           }
-permissions: write-all
