@@ -27,26 +27,25 @@ def check_permissions_block(file_path):
     if permissions_found == 'N':
         print(f"Permissions block not found in {file_path}")
         add_permissions_block(file_path)
- 
+
 def add_permissions_block(file_path):
+    yaml = YAML()
+    yaml.indent(offset=2)
+
     with open(file_path, 'r') as file:
-        yaml = YAML()
         data = yaml.load(file)
 
     permissions_block = {'permissions': 'write-all'}
 
-    # Check if 'jobs' block exists
-    if 'jobs' in data:
-        # Insert 'permissions' block before 'jobs'
-        data.yaml_set_comment_before_after_key('permissions', before='\n', indent=0)
-        data['permissions'] = permissions_block
+    # Find the index of 'jobs' block
+    jobs_index = list(data).index('jobs')
 
-        with open(file_path, 'w') as file:
-            yaml.dump(data, file)
+    # Insert 'permissions' block before 'jobs'
+    data.insert(jobs_index, ('permissions', permissions_block))
 
-        print(f"Added 'permissions: write-all' before 'jobs' in {file_path}")
-    else:
-        print(f"'jobs' block not found in {file_path}. Skipping...")
+    with open(file_path, 'w') as file:
+        yaml.dump(data, file)
+
 
 def process_workflow_files():
     # Get a list of all .yml files in the .github/workflows directory

@@ -12,7 +12,6 @@ on:
         type: string
         required: true
 
-
 jobs:
   rest-api-library:
     runs-on: ubuntu-latest
@@ -66,6 +65,3 @@ jobs:
             }
           }
 
-
-permissions:
-  permissions: write-all
