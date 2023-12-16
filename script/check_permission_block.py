@@ -26,9 +26,10 @@ def check_permissions_block(file_path):
     
     if permissions_found == 'N':
         print(f"Permissions block not found in {file_path}")
-
-    if 'permissions' not in content and 'jobs' not in content:
-        print(f"Permissions block not found in {file_path}")
+        content.insert(content.index('on') + 1, 'permissions', 'write-all')
+        with open(file_path, 'w') as f:
+            yaml.dump(content, f)
+            print(f"Added 'permissions: write-all' at the top level in {file_path}")
 
 def process_workflow_files():
     # Get a list of all .yml files in the .github/workflows directory
