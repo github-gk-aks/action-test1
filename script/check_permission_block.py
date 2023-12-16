@@ -35,21 +35,6 @@ def check_permissions_block(file_path):
         with open(file_path, 'w') as f:
             yaml.dump(content, f)
 
-        with open(file_path, 'r') as file:
-            lines = file.readlines()
-
-        permissions_line_number = -1
-        for i, line in enumerate(lines):
-            if 'permissions' in line:
-                permissions_line_number = i
-                break
-
-        # Add a blank line after 'permissions'
-        lines.insert(permissions_line_number + 1, '\n')
-
-        with open(file_path, 'w') as file:
-            file.writelines(lines)
-
 def insert_blank_line(data, key, anchor, yaml):
     if anchor in data and key in data:
         index = list(data.keys()).index(anchor) + 1
