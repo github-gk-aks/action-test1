@@ -64,4 +64,4 @@ jobs:
               console.error(err);
             }
           }
-permissions: write-all
+

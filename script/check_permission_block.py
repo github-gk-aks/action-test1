@@ -32,21 +32,21 @@ def check_permissions_block(file_path):
     # Insert a blank line after 'on' block
         with open(file_path, 'w') as f:
             yaml.dump(content, f)
-            insert_blank_line(content, 'permissions', 'on', yaml)
+        
 
 
-def insert_blank_line(data, key, anchor, yaml):
-    if anchor in data and key in data:
-        index = list(data.keys()).index(anchor) + 1
-        # Insert a blank line after the specified key only if it's not the last key
-        if index < len(data) and key in data.ca.items:
-            indent = data.ca.items[key][0].start_mark.column
-            data.yaml_set_comment_before_after_key(key, before='\n', indent=indent)
-            data.insert(index, key, data[key])
-    elif key not in data:
-        # Insert a new key with a blank line after the anchor
-        index = list(data.keys()).index(anchor) + 1
-        data.insert(index, key, "")
+# def insert_blank_line(data, key, anchor, yaml):
+#     if anchor in data and key in data:
+#         index = list(data.keys()).index(anchor) + 1
+#         # Insert a blank line after the specified key only if it's not the last key
+#         if index < len(data) and key in data.ca.items:
+#             indent = data.ca.items[key][0].start_mark.column
+#             data.yaml_set_comment_before_after_key(key, before='\n', indent=indent)
+#             data.insert(index, key, data[key])
+#     elif key not in data:
+#         # Insert a new key with a blank line after the anchor
+#         index = list(data.keys()).index(anchor) + 1
+#         data.insert(index, key, "")
 
 
 def process_workflow_files():
