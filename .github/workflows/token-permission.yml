@@ -26,6 +26,16 @@ jobs:
       run: |
         for file in $(find .github/workflows -name '*.yml' -not \( -name 'token-permission.yml' -o -name 'add-license-file.yml' \)); do
             python script/check_permission_block.py "$file"
+            status=$?
+            if [ $status -eq 0 ]; then
+              echo "Permissions block found. Continuing..."
+            elif [ $status -eq 1 ]; then
+              echo "Permissions block not found. Adding permissions block..."
+              sed -i '/^jobs:/i \npermissions : write-all' "$file"
+            else
+              echo "Error in checking permissions block."
+              exit 1
+            fi
         done
 
     - name: Check for Changes
