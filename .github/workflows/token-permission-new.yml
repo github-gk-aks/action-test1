@@ -22,7 +22,7 @@ jobs:
     - name: Check and Add Permissions Block
       run: |
         file_list="${{ steps.find-yml.outputs.file-list }}"
-        echo "$file_list" | while IFS= read -r file_path; do
+        for file_path in $file_list; do
             if ! grep -q "permissions:" "$file_path"; then
                 echo "Permissions block not found in $file_path. Adding..."
                 sed -i -e '/^jobs:/i \permissions: write-all\n' "$file_path"
