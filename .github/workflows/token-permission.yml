@@ -21,10 +21,11 @@ jobs:
           find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml' -exec echo -n {} + | sed 's/ /,/g' > file-list.txt
           file_list=$(cat file-list.txt)
           echo "File List: $file_list"
-          echo "::set-output name=file-list::\"[$file_list]\""
+          echo "::set-output name=file-list::[$file_list]"
        
   add-permissions-block:
     runs-on: ubuntu-latest
+    needs: generate-file-list
     strategy:
       matrix:
         file: ${{ fromJson(needs.generate-file-list.outputs.file-list) }}
