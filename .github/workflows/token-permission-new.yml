@@ -29,7 +29,7 @@ jobs:
 
     - name: Debug Check and Add Permissions Block
       run: |
-        file_list=$(cat ${{ steps.find-yml.outputs.file-list }})
+        file_list=$(cat ${{ github.workspace }}/file-list.txt)
         IFS=$'\n' read -r -d '' -a files <<< "$file_list"
         for file_path in "${files[@]}"; do
             echo "Checking permissions in: $file_path"
