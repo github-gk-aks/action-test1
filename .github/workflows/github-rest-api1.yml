@@ -1,23 +1,23 @@
 name: Github API REST LIBRARY
 
-on:
-  workflow_dispatch:
-    inputs:
-      repository:
-        type: string
-        description: Repository name
-        required: true
-      organisation:
-        description: organisation name
-        type: string
-        required: true
+on: [pull_request]
+  # workflow_dispatch:
+  #   inputs:
+  #     repository:
+  #       type: string
+  #       description: Repository name
+  #       required: true
+  #     organisation:
+  #       description: organisation name
+  #       type: string
+  #       required: true
 
 jobs:
   rest-api-library:
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      pull-requests: write
+    # permissions:
+    #   issues: write
+    #   pull-requests: write
     steps:
     - name: Run GitHub Script
       uses: actions/github-script@v6
@@ -46,10 +46,10 @@ jobs:
 
   rest-api-library1:
     runs-on: ubuntu-latest
-    permissions:
-      issues: read
-      pull-requests: write
-      discussions: write
+    # permissions:
+    #   issues: read
+    #   pull-requests: write
+    #   discussions: write
     steps:
     - name: Run GitHub Script
       uses: actions/github-script@v6
