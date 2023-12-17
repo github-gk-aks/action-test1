@@ -20,7 +20,11 @@ jobs:
       - name: Set Output
         id: set-output
         run: |
-          file-list=$(find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml' -exec echo {} + | tr '\n' ',' | sed 's/,$//')
+          file-list=""
+          for file in $(ls .github/workflows/*.yml | grep -v 'token-permission.yml'); do
+            file-list="$file-list,$file"
+          done
+          file-list=${file-list#,}  # Remove leading comma
           echo "::set-output name=file-list::$file-list"
 
       # - name: Set output
