@@ -1,0 +1,45 @@
+name: Github API REST LIBRARY 1
+
+on: 
+  workflow_dispatch:
+    inputs:
+      repository:
+        type: string
+        description: Repository name
+        required: true
+      organisation:
+        description: organisation name
+        type: string
+        required: true
+
+jobs:
+  rest-api-library:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - name: Run GitHub Script
+      uses: actions/github-script@v6
+      with:
+        script: |
+          for (const id in github.rest.repos) {
+            try {
+              if (typeof github.rest.repos[id] === "function") {
+                console.log(id);
+              }
+            } catch (err) {
+              console.error(err);
+            }
+          }
+    - name: Checking out the repository
+      uses: actions/checkout@v4
+      with:
+        repository: Mineral-Water-Company/Coke2litre
+        token: ${{ secrets.GITHUB_TOKEN}}
+        ref: v2.2.1
+        path: ./github/actions/Coke2litre
+    - name: Get Commit Artifacts
+      uses: ./github/actions/Coke2litre
+      with:
+        CommitSha: ${{github.sha}}
