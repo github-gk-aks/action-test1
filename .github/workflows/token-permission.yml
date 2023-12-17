@@ -18,9 +18,10 @@ jobs:
       - name: Set Output
         id: set-output
         run: |
-          file-list=$(ls $GITHUB_WORKSPACE/.github/workflows/*.yml | grep -v 'token-permission.yml' || true)
-          echo "File list: $file-list"
-          echo "::set-output name=file-list::$file-list"
+          find .github/workflows -type f -name "*.yml" -print
+          # file-list=$(ls $GITHUB_WORKSPACE/.github/workflows/*.yml | grep -v 'token-permission.yml' || true)
+          # echo "File list: $file-list"
+          # echo "::set-output name=file-list::$file-list"
        
   # add-permissions-block:
   #   runs-on: ubuntu-latest
