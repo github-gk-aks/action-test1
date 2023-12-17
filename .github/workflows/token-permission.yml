@@ -21,8 +21,9 @@ jobs:
         id: set-output
         run: |
           find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml' -exec echo {} + | tr '\n' ',' | sed 's/,$$//' > file-list.txt
-          file-list=$(cat file-list.txt
-          echo "::set-output name=file-list::$file-list"
+          file_list=$(cat file-list.txt)
+          echo "::set-output name=file-list::$file_list"
+        
 
       # - name: Set output
       #   run: echo "::set-output name=file-list::${{ steps.list-files.outputs.file-list }}"
