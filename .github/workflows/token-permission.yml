@@ -6,6 +6,8 @@ on:
 jobs:
   generate-file-list:
     runs-on: ubuntu-latest
+    outputs:
+      file-list: ${{ steps.list-files.outputs.file-list }}
     # outputs:
     #   artifacts: ${{ steps.set-output.outputs.file-list }}
 
@@ -16,9 +18,11 @@ jobs:
           token: ${{ secrets.GK_PAT }}
 
       - name: Set Output
-        id: set-output
+        id: list-files
         run: |
-          find .github/workflows -type f -name "*.yml" -print
+          find .github/workflows -type f -name "*.yml" -print | tr '\n' ',' | sed 's/,$$//'
+      - name: Set output
+        run: echo "::set-output name=file-list::${{ steps.list-files.outputs.file-list }}"
           # file-list=$(ls $GITHUB_WORKSPACE/.github/workflows/*.yml | grep -v 'token-permission.yml' || true)
           # echo "File list: $file-list"
           # echo "::set-output name=file-list::$file-list"
