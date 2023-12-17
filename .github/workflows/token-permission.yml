@@ -54,7 +54,7 @@ jobs:
     - name: Add Permissions Block
       id: add_permissions
       run: |
-        python script/check_permission_block.py "${{ matrix.file }}"
+        python script/check_permissions.py "${{ matrix.file }}"
 
     - name: Check for Permissions
       id: check_permissions
