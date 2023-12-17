@@ -20,11 +20,7 @@ jobs:
       - name: Set Output
         id: set-output
         run: |
-          file_array=()
-          while IFS= read -r -d '' file; do
-            file_array+=("$file")
-          done < <(find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml' -print0)  
-          file-list=$(IFS=,; echo "${file_array[*]}")
+          file-list=$(find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml' -exec echo {} + | tr '\n' ',' | sed 's/,$$//')
           echo "::set-output name=file-list::$file-list"
 
       # - name: Set output
