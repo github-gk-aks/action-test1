@@ -16,6 +16,7 @@ jobs:
       id: find-yml
       run: |
         file_list=$(find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml' -printf '%p,' | sed 's/,$//')
+        file_list="[\"$(echo "$file_list" | sed 's/,/\",\"/g')\"]"
         echo "File List: $file_list"
         echo "::set-output name=file-list::$file_list"
 
