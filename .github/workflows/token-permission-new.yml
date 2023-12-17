@@ -15,13 +15,21 @@ jobs:
     - name: Find YML Files
       id: find-yml
       run: |
-        file_list=$(find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml')
-        echo "File List: $file_list"
-        echo "::set-output name=file-list::$file_list"
+        find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml' -printf '%p\n' > file-list.txt
+        cat file-list.txt
+        echo "::set-output name=file-list::file-list.txt"
+     
+
+    # - name: Find YML Files
+    #   id: find-yml
+    #   run: |
+    #     file_list=$(find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml')
+    #     echo "File List: $file_list"
+    #     echo "::set-output name=file-list::$file_list"
 
     - name: Debug Check and Add Permissions Block
       run: |
-        file_list=$(cat file-list.txt)
+        file_list=$(cat ${{ steps.find-yml.outputs.file-list }})
         IFS=$'\n' read -r -d '' -a files <<< "$file_list"
         for file_path in "${files[@]}"; do
             echo "Checking permissions in: $file_path"
