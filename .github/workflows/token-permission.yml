@@ -18,10 +18,10 @@ jobs:
       - name: Set Output
         id: set-output
         run: |
-            file_list=$(find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml' -printf '%p,' | sed 's/,$//')
-            file_list="[\"${file_list//,/'\",\"'}\"]"
-            echo "File List: $file_list"
-            echo "::set-output name=file-list::$file_list"
+          file_list=$(find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml' -printf '%p,' | sed 's/,$//')
+          file_list="[$(echo $file_list | sed 's/,/\",\"/g')]"
+          echo "File List: $file_list"
+          echo "::set-output name=file-list::$file_list"
         
             
   add-permissions-block:
