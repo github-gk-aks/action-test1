@@ -20,9 +20,9 @@ jobs:
         env:
           GK_TOKEN: ${{ secrets.GK_PAT }}
         run: |
-          file-list=$(find $GITHUB_WORKSPACE -type f -name '*.yml' -not -name 'token-permission.yml' -print)
+          file-list=$(ls $GITHUB_WORKSPACE/.github/workflows/*.yml | grep -v 'token-permission.yml' || true)
           echo "::set-output name=file-list::$file-list"
-        working-directory: ${{ github.workspace }}
+       
 
   # add-permissions-block:
   #   runs-on: ubuntu-latest
