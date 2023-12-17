@@ -66,7 +66,7 @@ jobs:
           if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
             echo "Permissions block not found. Adding permissions block..."
             echo "File path: ${{ matrix.file }}"
-            sed -i -e '/^jobs:/i \permissions: write-all\n' .github/workflows/github-rest-api1.yml
+            sed -i -e '/^jobs:/i \permissions: write-all\n' ${{ matrix.file }}
           else
             echo "Permissions block found. Continuing..."
           fi
