@@ -4,95 +4,94 @@ on:
   workflow_dispatch:
 
 jobs:
-  generate-file-list:
-    runs-on: ubuntu-latest
-    outputs:
-      file-list: ${{ steps.list-files.outputs.file-list }}
-    # outputs:
-    #   artifacts: ${{ steps.set-output.outputs.file-list }}
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GK_PAT }}
-
-      - name: Set Output
-        id: list-files
-        run: |
-          file-list=$(find .github/workflows -type f -name "*.yml" -print | tr '\n' ',' | sed 's/,$$//')
-          echo $file-list
-
-      - name: Set output
-        run: echo "::set-output name=file-list::${{ steps.list-files.outputs.file-list }}"
-          # file-list=$(ls $GITHUB_WORKSPACE/.github/workflows/*.yml | grep -v 'token-permission.yml' || true)
-          # echo "File list: $file-list"
-          # echo "::set-output name=file-list::$file-list"
-       
-  # add-permissions-block:
+  # generate-file-list:
   #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       file: ${{fromJson(needs.generate-file-list.outputs.artifacts)}}
+  #   outputs:
+  #     file-list: ${{ steps.list-files.outputs.file-list }}
+  #   # outputs:
+  #   #   artifacts: ${{ steps.set-output.outputs.file-list }}
 
   #   steps:
-  #   - name: Checkout Repository
-  #     uses: actions/checkout@v4
-  #     with:
-  #       token: ${{ secrets.GK_PAT }}
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v4
+  #       with:
+  #         token: ${{ secrets.GK_PAT }}
 
-  #   - name: Install Python
-  #     uses: actions/setup-python@v3
-  #     with:
-  #       python-version: 3.x
+  #     - name: Set Output
+  #       id: list-files
+  #       run: |
+  #         file-list=$(find .github/workflows -type f -name "*.yml" -print | tr '\n' ',' | sed 's/,$$//')
+  #         echo ${{ matrix.file }}-list
 
-  #   - name: Install dependencies
-  #     run: |
-  #       python -m pip install --upgrade pip
-  #       pip install ruamel.yaml
+  #     - name: Set output
+  #       run: echo "::set-output name=file-list::${{ steps.list-files.outputs.file-list }}"
+  #         # file-list=$(ls $GITHUB_WORKSPACE/.github/workflows/*.yml | grep -v 'token-permission.yml' || true)
+  #         # echo "File list: ${{ matrix.file }}-list"
+  #         # echo "::set-output name=file-list::${{ matrix.file }}-list"
+       
+  add-permissions-block:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        file: [".github/workflows/*.yml"]
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GK_PAT }}
 
-  #   - name: Add Permissions Block
-  #     id: add_permissions
-  #     run: |
-  #       python script/check_permission_block.py ${{ matrix.file }}
+    - name: Install Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.x
 
-  #   - name: Check for Permissions
-  #     id: check_permissions
-  #     run: |
-  #         echo "Permissions found: ${{ steps.add_permissions.outputs.permissions_found }}"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install ruamel.yaml
 
-  #   - name: Take Action based on Permissions
-  #     run: |
-  #         if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
-  #           echo "Permissions block not found. Adding permissions block..."
-  #           echo "File path: ${{ matrix.file }}"
-  #           sed -i -e '/^jobs:/i \permissions: write-all\n' .github/workflows/github-rest-api1.yml
-  #         else
-  #           echo "Permissions block found. Continuing..."
-  #         fi
-  #     shell: bash
+    - name: Add Permissions Block
+      id: add_permissions
+      run: |
+        python script/check_permission_block.py "${{ matrix.file }}"
 
-  #   - name: Check for Changes
-  #     id: check_changes
-  #     run: |
-  #       if git diff --quiet; then
-  #       echo "No changes to commit. Skipping commit step."
-  #       echo "::set-output name=changes::false"
-  #       else
-  #       echo "::set-output name=changes::true"
-  #       fi
-  #     shell: bash
+    - name: Check for Permissions
+      id: check_permissions
+      run: |
+          echo "Permissions found: ${{ steps.add_permissions.outputs.permissions_found }}"
 
-  #   - name: Commit Changes
-  #     if: steps.check_changes.outputs.changes == 'true'
-  #     run: |
-  #       git config user.email ${{ secrets.GIT_COMMITTER_EMAIL }}
-  #       git config user.name ${{ secrets.GIT_COMMITTER_NAME }}
-  #       git add .
-  #       git commit -m "Added Permission Block- $(date +"%Y-%m-%d %H:%M:%S")"
-  #       git push # Replace 'branch-name' with the branch name
-  #     env:
-  #       GITHUB_WORKSPACE: ${{ github.workspace }}
-  #       GITHUB_TOKEN: ${{ secrets.GK_PAT }}
+    - name: Take Action based on Permissions
+      run: |
+          if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
+            echo "Permissions block not found. Adding permissions block..."
+            echo "File path: ${{ matrix.file }}"
+            sed -i -e '/^jobs:/i \permissions: write-all\n' .github/workflows/github-rest-api1.yml
+          else
+            echo "Permissions block found. Continuing..."
+          fi
+      shell: bash
+
+    - name: Check for Changes
+      id: check_changes
+      run: |
+        if git diff --quiet; then
+        echo "No changes to commit. Skipping commit step."
+        echo "::set-output name=changes::false"
+        else
+        echo "::set-output name=changes::true"
+        fi
+      shell: bash
+
+    - name: Commit Changes
+      if: steps.check_changes.outputs.changes == 'true'
+      run: |
+        git config user.email ${{ secrets.GIT_COMMITTER_EMAIL }}
+        git config user.name ${{ secrets.GIT_COMMITTER_NAME }}
+        git add .
+        git commit -m "Added Permission Block- $(date +"%Y-%m-%d %H:%M:%S")"
+        git push # Replace 'branch-name' with the branch name
+      env:
+        GITHUB_WORKSPACE: ${{ github.workspace }}
+        GITHUB_TOKEN: ${{ secrets.GK_PAT }}
 
 
