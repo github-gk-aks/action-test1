@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GK_PAT }}
-          
+
       - name: Set Output
         id: set-output
         run: echo "::set-output name=file-list::$(find .github/workflows -name '*.yml' -not \( -name 'token-permission.yml' \))"
@@ -23,7 +23,6 @@ jobs:
     strategy:
       matrix:
         file: ${{fromJson(needs.generate-file-list.outputs.step-output)}}
-      max-parallel: 1
 
     steps:
     - name: Checkout Repository
