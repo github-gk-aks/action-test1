@@ -9,6 +9,11 @@ jobs:
     outputs:
       step-output: ${{ steps.set-output.outputs.file-list }}
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GK_PAT }}
+          
       - name: Set Output
         id: set-output
         run: echo "::set-output name=file-list::$(find .github/workflows -name '*.yml' -not \( -name 'token-permission.yml' \))"
