@@ -4,8 +4,22 @@ on:
   workflow_dispatch:
 
 jobs:
+  generate-file-list:
+    runs-on: ubuntu-latest
+    outputs:
+      step-output: ${{ steps.set-output.outputs.file-list }}
+    steps:
+      - name: Set Output
+        id: set-output
+        run: echo "::set-output name=file-list::$(find .github/workflows -name '*.yml' -not \( -name 'token-permission.yml' \))"
+
   add-permissions-block:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        file: ${{fromJson(needs.generate-file-list.outputs.step-output)}}
+      max-parallel: 1
+
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
@@ -25,10 +39,8 @@ jobs:
     - name: Add Permissions Block
       id: add_permissions
       run: |
-          for file in $(find .github/workflows -name '*.yml' -not \( -name 'token-permission.yml' \)); do
-              python script/check_permission_block.py "$file"
-          done
-  
+        python script/check_permission_block.py ${{ matrix.file }}
+
     - name: Check for Permissions
       id: check_permissions
       run: |
@@ -38,7 +50,7 @@ jobs:
       run: |
           if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
             echo "Permissions block not found. Adding permissions block..."
-            echo "File path: $file"
+            echo "File path: ${{ matrix.file }}"
             sed -i -e '/^jobs:/i \permissions: write-all\n' .github/workflows/github-rest-api1.yml
           else
             echo "Permissions block found. Continuing..."
@@ -62,7 +74,7 @@ jobs:
         git config user.email ${{ secrets.GIT_COMMITTER_EMAIL }}
         git config user.name ${{ secrets.GIT_COMMITTER_NAME }}
         git add .
-        git commit -m "Replaced occurances of Old Github Org - $(date +"%Y-%m-%d %H:%M:%S")"
+        git commit -m "Added Permission Block- $(date +"%Y-%m-%d %H:%M:%S")"
         git push # Replace 'branch-name' with the branch name
       env:
         GITHUB_WORKSPACE: ${{ github.workspace }}
