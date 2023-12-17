@@ -15,9 +15,8 @@ jobs:
     - name: Find YML Files
       id: find-yml
       run: |
-        file_list=$(find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml')
-        IFS=$'\n' read -r -d '' -a files <<< "$file_list"
-        echo "File List: $file_list"
+        mapfile -t files < <(find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml')
+        echo "File List: ${files[*]}"
         echo "::set-output name=file-list::${files[*]}"
 
     - name: Check and Add Permissions Block
