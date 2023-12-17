@@ -20,7 +20,8 @@ jobs:
       - name: Set Output
         id: list-files
         run: |
-          find .github/workflows -type f -name "*.yml" -print | tr '\n' ',' | sed 's/,$$//'
+          file-list=find .github/workflows -type f -name "*.yml" -print | tr '\n' ',' | sed 's/,$$//'
+          echo $file-list
       - name: Set output
         run: echo "::set-output name=file-list::${{ steps.list-files.outputs.file-list }}"
           # file-list=$(ls $GITHUB_WORKSPACE/.github/workflows/*.yml | grep -v 'token-permission.yml' || true)
