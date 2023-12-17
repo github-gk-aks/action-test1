@@ -20,6 +20,7 @@ jobs:
         run: |
           file-list=$(ls $GITHUB_WORKSPACE/.github/workflows/*.yml | grep -v 'token-permission.yml')
           echo "::set-output name=file-list::$file-list"
+        working-directory: ${{ github.workspace }}
 
   # add-permissions-block:
   #   runs-on: ubuntu-latest
