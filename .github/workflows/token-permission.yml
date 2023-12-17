@@ -33,7 +33,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        file: [".github/workflows/github-rest-api1.yml",".github/workflows/github-rest-api2.yml"]
+        files: ${{fromJson(needs.set_files.outputs.files)}}
+        #file: [".github/workflows/github-rest-api1.yml",".github/workflows/github-rest-api2.yml"]
+        #paths-ignore: ["**/token-permission.yml"]
       max-parallel: 1
     steps:
     - name: Checkout Repository
@@ -50,6 +52,17 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install ruamel.yaml
+
+    - name: Set files
+      id: set_files
+      run: |
+        mapfile -t files < <(find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml')
+        echo "::set-output name=files::${files[*]}"
+
+    - name: Set matrix variables
+      run: |
+        echo "file=${{ steps.set_files.outputs.files }}" >> $GITHUB_ENV
+      shell: bash
 
     - name: Add Permissions Block
       id: add_permissions
