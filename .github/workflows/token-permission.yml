@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        file: [".github/workflows/*.yml"]
+        file: [".github/workflows/github-rest-api1.yml",".github/workflows/github-rest-api2.yml"]
       max-parallel: 1
     steps:
     - name: Checkout Repository
