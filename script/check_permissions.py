@@ -35,5 +35,4 @@ if __name__ == "__main__":
         print("::set-output name=permissions_found::false")
     else:
         print("::set-output name=permissions_found::true")
-    check_permissions_block(file_path)
 
