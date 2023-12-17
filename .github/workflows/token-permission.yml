@@ -21,7 +21,7 @@ jobs:
           find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml' -exec echo -n {} + | sed 's/ /,/g' > file-list.txt
           file_list=$(cat file-list.txt)
           echo "File List: $file_list"
-          echo "::set-output name=file-list::$file_list"
+          echo "::set-output name=file-list::\"[$file_list]\""
        
   add-permissions-block:
     runs-on: ubuntu-latest
@@ -30,7 +30,6 @@ jobs:
         file: ${{ fromJson(needs.generate-file-list.outputs.file-list) }}
         #files: ${{ needs.set_files.outputs.files }}
         #file: [".github/workflows/github-rest-api1.yml",".github/workflows/github-rest-api2.yml"]
-      max-parallel: 1
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
@@ -47,21 +46,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install ruamel.yaml
 
-    - name: Set files
-      id: set_files
-      run: |
-        mapfile -t files < <(find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml')
-        echo "::set-output name=files::${files[*]}"
-
-    - name: Set matrix variables
-      run: |
-        echo "file=${{ steps.set_files.outputs.files }}" >> $GITHUB_ENV
-      shell: bash
-
     - name: Add Permissions Block
       id: add_permissions
       run: |
-        python script/check_permissions.py "${{ matrix.files }}"
+        python script/check_permissions.py "${{ matrix.file }}"
 
     - name: Check for Permissions
       id: check_permissions
@@ -72,8 +60,8 @@ jobs:
       run: |
           if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
             echo "Permissions block not found. Adding permissions block..."
-            echo "File path: ${{ matrix.files }}"
-            sed -i -e '/^jobs:/i \permissions: write-all\n' ${{ matrix.files }}
+            echo "File path: ${{ matrix.file }}"
+            sed -i -e '/^jobs:/i \permissions: write-all\n' ${{ matrix.file }}
           else
             echo "Permissions block found. Continuing..."
           fi
