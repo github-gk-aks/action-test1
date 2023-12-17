@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        file: "${{ needs.generate-file-list.outputs.file-list}}"
+        file: ${{ fromJson(needs.generate-file-list.outputs.file-list) }}
         #files: ${{ needs.set_files.outputs.files }}
         #file: [".github/workflows/github-rest-api1.yml",".github/workflows/github-rest-api2.yml"]
       max-parallel: 1
