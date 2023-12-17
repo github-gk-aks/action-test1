@@ -21,6 +21,7 @@ jobs:
           GK_TOKEN: ${{ secrets.GK_PAT }}
         run: |
           file-list=$(ls $GITHUB_WORKSPACE/.github/workflows/*.yml | grep -v 'token-permission.yml' || true)
+          echo "File list: $file-list"
           echo "::set-output name=file-list::$file-list"
        
 
