@@ -18,7 +18,7 @@ jobs:
       - name: Set Output
         id: set-output
         run: |
-          file-list=$(find .github/workflows -name '*.yml' -not \( -name 'token-permission.yml' \))
+          file-list=$(find $GITHUB_WORKSPACE/.github/workflows -name '*.yml' -not \( -name 'token-permission.yml' \))
           echo "::set-output name=file-list::$file-list"
 
   # add-permissions-block:
