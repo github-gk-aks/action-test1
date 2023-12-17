@@ -12,14 +12,12 @@ on:
         type: string
         required: true
 
-permissions: write-all
-
 jobs:
   rest-api-library:
     runs-on: ubuntu-latest
-    # permissions:
-    #   issues: write
-    #   pull-requests: write
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
     - name: Run GitHub Script
       uses: actions/github-script@v6
