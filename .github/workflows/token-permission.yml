@@ -6,8 +6,8 @@ on:
 jobs:
   generate-file-list:
     runs-on: ubuntu-latest
-    outputs:
-      artifacts: ${{ steps.set-output.outputs.file-list }}
+    # outputs:
+    #   artifacts: ${{ steps.set-output.outputs.file-list }}
 
     steps:
       - name: Checkout Repository
@@ -17,14 +17,11 @@ jobs:
 
       - name: Set Output
         id: set-output
-        env:
-          GK_TOKEN: ${{ secrets.GK_PAT }}
         run: |
           file-list=$(ls $GITHUB_WORKSPACE/.github/workflows/*.yml | grep -v 'token-permission.yml' || true)
           echo "File list: $file-list"
           echo "::set-output name=file-list::$file-list"
        
-
   # add-permissions-block:
   #   runs-on: ubuntu-latest
   #   strategy:
