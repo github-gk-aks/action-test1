@@ -68,13 +68,13 @@ jobs:
             echo "false" > "changes_${matrix_file}"
             cat "changes_${matrix_file}"
         fi
-        echo "::set-output name=matrix-file::$(basename "${{ matrix.file }}")"
+        echo "::set-output name=matrix-file::"changes_${matrix_file}""
 
     - name: Upload changes artifact
       uses: actions/upload-artifact@v4
       with:
-        name: changes_${{ steps.check_permissions.outputs.matrix-file }}
-        path: ${{ github.workspace }}/artifact
+        name: ${{ steps.check_permissions.outputs.matrix-file }}
+        path: ${{ github.workspace }}
 
   accumulate-changes:
     runs-on: ubuntu-latest
