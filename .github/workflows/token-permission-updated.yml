@@ -80,7 +80,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.check_permissions.outputs.matrix-file }}
-        path: ${{ github.workspace }}
+        path: ${{ github.workspace }}/artifact
 
   accumulate-changes:
     runs-on: ubuntu-latest
