@@ -60,6 +60,7 @@ jobs:
         if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
             matrix_file=$(basename "${{ matrix.file }}")
             matrix_file=${matrix_file%.*}
+            cd ./artifact
             touch "changes_${matrix_file}"
             echo "true" > "changes_${matrix_file}"
             cat "changes_${matrix_file}"
