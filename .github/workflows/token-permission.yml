@@ -38,6 +38,7 @@ jobs:
     - name: Check and Add Permissions Block
       run: |
         file_list="${{ steps.find-yml.outputs.file-list }}"
+        echo "File path: $file_path"
         IFS=$'\n' read -r -d '' -a files <<< "$file_list"
         echo "preparing to run the for loop"
           for file_path in "${files[@]}"; do
