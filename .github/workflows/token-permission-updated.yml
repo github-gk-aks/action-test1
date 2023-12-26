@@ -82,14 +82,15 @@ jobs:
     steps:
       - name: Download changes artifacts
         run: |
-          for file in ${{fromJson(needs.add-permissions-block.outputs.file-list)}}; do
-            echo "Downloading changes artifact for $file"
-            matrix_file=$(basename $file)
-            matrix_file=${matrix_file%.*}  
-            actions/download-artifact@v2
-              name: changes_${matrix_file}
-              path: ${{ github.workspace }}
-          done
+            for file in ${{fromJson(needs.add-permissions-block.outputs.file-list)}}; do
+                echo "Downloading changes artifact for $file"
+                matrix_file=$(basename "$file")
+                matrix_file=${matrix_file%.*}
+                echo "::set-output name=matrix_file::$matrix_file"
+                actions/download-artifact@v2
+                  name: changes_${matrix_file}
+                  path: ${{ github.workspace }}
+            done
 
       - name: Accumulate Changes
         id: accumulate_changes
