@@ -58,11 +58,10 @@ jobs:
       run: |
         echo "Permissions found: ${{ steps.add_permissions.outputs.permissions_found }}"
         if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
-            file_basename= $(basename ${{matrix.file}}).txt
-            echo $file_basename
-            touch "changes_$(basename ${{ matrix.file }}).txt"
-            echo "true" > "changes_$(basename ${{ matrix.file }}).txt"
-            cat changes_$(basename ${{ matrix.file }}).txt
+            matrix_file=$(basename "${{ matrix.file }}")
+            touch "changes_${matrix_file}.txt"
+            echo "true" > "changes_${matrix_file}.txt"
+            cat "changes_${matrix_file}.txt"
         fi
 
     - name: Upload changes artifact
