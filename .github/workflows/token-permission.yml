@@ -38,14 +38,15 @@ jobs:
     - name: Check and Add Permissions Block
       run: |
         file_list="${{ steps.find-yml.outputs.file-list }}"
-        for file_path in $file_list; do
+        IFS=$'\n' read -r -d '' -a files <<< "$file_list"
+          for file_path in "${files[@]}"; do
             if ! grep -q "permissions:" "$file_path"; then
-                echo "Permissions block not found in $file_path. Adding..."
-                sed -i -e '/^jobs:/i \permissions: write-all\n' "$file_path"
+              echo "Permissions block not found in $file_path. Adding..."
+              sed -i -e '/^jobs:/i \permissions: write-all\n' "$file_path"
             else
-                echo "Permissions block found in $file_path. Skipping..."
+              echo "Permissions block found in $file_path. Skipping..."
             fi
-        done
+          done
 
     # - name: Check for Changes
     #   id: check_changes
