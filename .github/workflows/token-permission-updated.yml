@@ -62,14 +62,15 @@ jobs:
             touch "changes_${matrix_file}.txt"
             echo "true" > "changes_${matrix_file}.txt"
             cat "changes_${matrix_file}.txt"
+            ls
         fi
 
     - name: Upload changes artifact
       if: steps.add_permissions.outputs.permissions_found == 'false'
       uses: actions/upload-artifact@v2
       with:
-        name: changes-${matrix_file }
-        path: changes_${matrix_file }.txt
+        name: changes-${matrix_file}
+        path: changes_${matrix_file}.txt
 
   accumulate-changes:
     runs-on: ubuntu-latest
