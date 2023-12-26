@@ -86,6 +86,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: add-permissions-block
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GK_PAT }}
+          
       - name: Download changes artifacts
         run: |
             for file in ${{fromJson(needs.add-permissions-block.outputs.file-list)}}; do
