@@ -65,10 +65,12 @@ jobs:
             cat "changes_${matrix_file}"
             ls
             pwd
+        else
+            echo "false" > "changes_${matrix_file}"
+            cat "changes_${matrix_file}"
         fi
 
     - name: Upload changes artifact
-      if: steps.add_permissions.outputs.permissions_found == 'false'
       uses: actions/upload-artifact@v2
       with:
         name: changes_${matrix_file}
