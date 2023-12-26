@@ -59,7 +59,6 @@ jobs:
         echo "Permissions found: ${{ steps.add_permissions.outputs.permissions_found }}"
         if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
             matrix_file=$(basename "${{ matrix.file }}")
-            matrix_file=${matrix_file%.*}
             touch "changes_${matrix_file}"
             echo "true" > "changes_${matrix_file}"
             cat "changes_${matrix_file}"
@@ -74,7 +73,7 @@ jobs:
     - name: Upload changes artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ steps.check_permissions.outputs.matrix_file }}
+        name: changes_${{ steps.check_permissions.outputs.matrix-file }}
         path: ${{ github.workspace }}/artifact
 
   accumulate-changes:
