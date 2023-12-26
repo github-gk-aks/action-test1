@@ -59,10 +59,11 @@ jobs:
         echo "Permissions found: ${{ steps.add_permissions.outputs.permissions_found }}"
         if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
             matrix_file=$(basename "${{ matrix.file }}")
-            touch "changes_${matrix_file}.txt"
-            echo "true" > "changes_${matrix_file}.txt"
-            cat "changes_${matrix_file}.txt"
+            touch "changes_${matrix_file}"
+            echo "true" > "changes_${matrix_file}"
+            cat "changes_${matrix_file}"
             ls
+            pwd
         fi
 
     - name: Upload changes artifact
@@ -70,7 +71,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: changes-${matrix_file}
-        path: changes_${matrix_file}.txt
+        path: changes_${matrix_file}
 
   accumulate-changes:
     runs-on: ubuntu-latest
@@ -84,7 +85,7 @@ jobs:
             matrix_file=${matrix_file%.*}  # Remove file extension
             actions/download-artifact@v2
               name: changes-${matrix_file}
-              path: changes_${matrix_file}.txt
+              path: changes_${matrix_file}
           done
 
       - name: Accumulate Changes
