@@ -39,6 +39,7 @@ jobs:
       run: |
         file_list="${{ steps.find-yml.outputs.file-list }}"
         IFS=$'\n' read -r -d '' -a files <<< "$file_list"
+        echo "preparing to run the for loop"
           for file_path in "${files[@]}"; do
             echo "Inside the for loop"
             if ! grep -q "permissions:" "$file_path"; then
