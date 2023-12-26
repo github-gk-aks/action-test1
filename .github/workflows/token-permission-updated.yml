@@ -74,7 +74,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: changes_${matrix_file}
-        path: ${{ github.workspace }}
+        path: ${{ github.workspace }}/artifact/changes_${matrix_file}
 
   accumulate-changes:
     runs-on: ubuntu-latest
@@ -87,8 +87,7 @@ jobs:
                 matrix_file=$(basename "$file")
                 matrix_file=${matrix_file%.*}
                 echo "::set-output name=matrix_file::$matrix_file"
-                uses actions/download-artifact@v2
-                with:
+                actions/download-artifact@v2
                   name: changes_${matrix_file}
                   path: ${{ github.workspace }}
             done
