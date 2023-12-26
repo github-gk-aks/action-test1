@@ -1,4 +1,4 @@
-name: Add Permissions Block
+name: Check and Add Permissions Block
 
 on:
   workflow_dispatch:
