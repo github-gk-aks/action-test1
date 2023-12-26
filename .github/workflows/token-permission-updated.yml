@@ -87,7 +87,7 @@ jobs:
                 matrix_file=$(basename "$file")
                 matrix_file=${matrix_file%.*}
                 echo "::set-output name=matrix_file::$matrix_file"
-                uses: actions/download-artifact@v2
+                uses actions/download-artifact@v2
                 with:
                   name: changes_${matrix_file}
                   path: ${{ github.workspace }}
