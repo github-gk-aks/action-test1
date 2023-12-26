@@ -58,8 +58,8 @@ jobs:
       run: |
         echo "Permissions found: ${{ steps.add_permissions.outputs.permissions_found }}"
         if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
-          touch "${{ github.workspace }}/changes_${{ matrix.file }}.txt"
-          echo "true" > "${{ github.workspace }}/changes_${{ matrix.file }}.txt"
+            touch "changes_$(basename ${{ matrix.file }}).txt"
+            echo "true" > "changes_$(basename ${{ matrix.file }}).txt"
         fi
 
     - name: Upload changes artifact
