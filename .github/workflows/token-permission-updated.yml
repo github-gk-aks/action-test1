@@ -94,7 +94,7 @@ jobs:
       - name: Accumulate Changes
         id: accumulate_changes
         run: |
-          for file in changes_*.txt; do
+          for file in changes_*; do
             accumulated_changes=$(cat "$file")
             if [ "$accumulated_changes" == "true" ]; then
               echo "Changes found in $file. Proceeding with commit."
