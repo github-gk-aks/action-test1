@@ -59,6 +59,7 @@ jobs:
         echo "Permissions found: ${{ steps.add_permissions.outputs.permissions_found }}"
         if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
             matrix_file=$(basename "${{ matrix.file }}")
+            matrix_file=${matrix_file%.*}
             touch "changes_${matrix_file}"
             echo "true" > "changes_${matrix_file}"
             cat "changes_${matrix_file}"
@@ -70,8 +71,8 @@ jobs:
       if: steps.add_permissions.outputs.permissions_found == 'false'
       uses: actions/upload-artifact@v2
       with:
-        name: changes-${matrix_file}
-        path: changes_${matrix_file}
+        name: changes_${matrix_file}
+        path: ${{ github.workspace }}
 
   accumulate-changes:
     runs-on: ubuntu-latest
@@ -82,10 +83,10 @@ jobs:
           for file in ${{fromJson(needs.add-permissions-block.outputs.file-list)}}; do
             echo "Downloading changes artifact for $file"
             matrix_file=$(basename $file)
-            matrix_file=${matrix_file%.*}  # Remove file extension
+            matrix_file=${matrix_file%.*}  
             actions/download-artifact@v2
-              name: changes-${matrix_file}
-              path: changes_${matrix_file}
+              name: changes_${matrix_file}
+              path: ${{ github.workspace }}
           done
 
       - name: Accumulate Changes
