@@ -18,7 +18,7 @@ jobs:
       - name: Set Output
         id: set-output
         run: |
-          file_list=$(find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml' -printf '%p,' | sed 's/,$//')
+          file_list=$(find .github/workflows -type f -name "*.yml" -not -name 'token-permission-updated.yml' -printf '%p,' | sed 's/,$//')
           file_list="[\"$(echo "$file_list" | sed 's/,/\",\"/g')\"]"
           echo "File List: $file_list"
           echo "::set-output name=file-list::$file_list"
@@ -58,6 +58,7 @@ jobs:
       run: |
         echo "Permissions found: ${{ steps.add_permissions.outputs.permissions_found }}"
         if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
+          touch "${{ github.workspace }}/changes_${{ matrix.file }}.txt"
           echo "true" > "${{ github.workspace }}/changes_${{ matrix.file }}.txt"
         fi
 
