@@ -60,7 +60,6 @@ jobs:
         if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
             matrix_file=$(basename "${{ matrix.file }}")
             matrix_file=${matrix_file%.*}
-            cd ./artifact
             touch "changes_${matrix_file}"
             echo "true" > "changes_${matrix_file}"
             cat "changes_${matrix_file}"
@@ -70,12 +69,13 @@ jobs:
             echo "false" > "changes_${matrix_file}"
             cat "changes_${matrix_file}"
         fi
+        echo "::set-output name=matrix-file::$(basename "${{ matrix.file }}")"
 
     - name: Upload changes artifact
       uses: actions/upload-artifact@v4
       with:
-        name: changes_${matrix_file}
-        path: ${{ github.workspace }}/artifact/changes_${matrix_file}
+        name: ${{ steps.check_permissions.outputs.matrix_file }}
+        path: ${{ github.workspace }}/artifact
 
   accumulate-changes:
     runs-on: ubuntu-latest
