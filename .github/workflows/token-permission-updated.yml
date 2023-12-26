@@ -1,0 +1,112 @@
+name: Add Permissions Block
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-file-list:
+    runs-on: ubuntu-latest
+    outputs:
+      file-list: ${{ steps.set-output.outputs.file-list }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GK_PAT }}
+
+      - name: Set Output
+        id: set-output
+        run: |
+          file_list=$(find .github/workflows -type f -name "*.yml" -not -name 'token-permission.yml' -printf '%p,' | sed 's/,$//')
+          file_list="[\"$(echo "$file_list" | sed 's/,/\",\"/g')\"]"
+          echo "File List: $file_list"
+          echo "::set-output name=file-list::$file_list"
+
+  add-permissions-block:
+    runs-on: ubuntu-latest
+    needs: generate-file-list
+    strategy:
+      matrix:
+        file: ${{ fromJson(needs.generate-file-list.outputs.file-list) }}
+    outputs:
+        file-list: ${{ needs.generate-file-list.outputs.file-list }}
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GK_PAT }}
+
+    - name: Install Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.x
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install ruamel.yaml
+
+    - name: Add Permissions Block
+      id: add_permissions
+      run: |
+        python script/check_permissions.py "${{ matrix.file }}"
+
+    - name: Check for Permissions
+      id: check_permissions
+      run: |
+        echo "Permissions found: ${{ steps.add_permissions.outputs.permissions_found }}"
+        if [ "${{ steps.add_permissions.outputs.permissions_found }}" == "false" ]; then
+          echo "true" > changes_${{ matrix.file }}.txt
+        fi
+
+    - name: Upload changes artifact
+      if: steps.check_permissions.outputs.permissions_found == 'false'
+      uses: actions/upload-artifact@v2
+      with:
+        name: changes-${{ matrix.file }}
+        path: changes_${{ matrix.file }}.txt
+
+  accumulate-changes:
+    runs-on: ubuntu-latest
+    needs: add-permissions-block
+    steps:
+      - name: Download changes artifacts
+        run: |
+          for file in ${{fromJson(needs.add-permissions-block.outputs.file-list)}}; do
+            echo "Downloading changes artifact for $file"
+            matrix_file=$(basename $file)
+            matrix_file=${matrix_file%.*}  # Remove file extension
+            actions/download-artifact@v2
+              name: changes_${matrix_file}
+              path: changes_${matrix_file}
+          done
+
+      - name: Accumulate Changes
+        id: accumulate_changes
+        run: |
+          for file in changes_*.txt; do
+            accumulated_changes=$(cat "$file")
+            if [ "$accumulated_changes" == "true" ]; then
+              echo "Changes found in $file. Proceeding with commit."
+              echo "::set-output name=changes::true"
+              break
+            fi
+          done
+          if [ -z "$accumulated_changes" ]; then
+            echo "No changes found. Skipping commit step."
+            echo "::set-output name=changes::false"
+          fi
+
+      - name: Commit Changes
+        if: steps.accumulate_changes.outputs.changes == 'true'
+        run: |
+            git config user.email ${{ secrets.GIT_COMMITTER_EMAIL }}
+            git config user.name ${{ secrets.GIT_COMMITTER_NAME }}
+            git add .
+            git commit -m "Added Permission Block- $(date +"%Y-%m-%d %H:%M:%S")"
+            git push # Replace 'branch-name' with the branch name
+        env:
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+          GITHUB_TOKEN: ${{ secrets.GK_PAT }}
