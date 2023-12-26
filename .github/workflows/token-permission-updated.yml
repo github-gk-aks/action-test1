@@ -64,7 +64,7 @@ jobs:
         fi
 
     - name: Upload changes artifact
-      if: steps.check_permissions.outputs.permissions_found == 'false'
+      if: steps.add_permissions.outputs.permissions_found == 'false'
       uses: actions/upload-artifact@v2
       with:
         name: changes-$(basename ${{ matrix.file }})
@@ -82,7 +82,7 @@ jobs:
             matrix_file=${matrix_file%.*}  # Remove file extension
             actions/download-artifact@v2
               name: changes-${matrix_file}
-              path: changes_${matrix_file}
+              path: changes_${matrix_file}.txt
           done
 
       - name: Accumulate Changes
