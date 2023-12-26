@@ -64,11 +64,17 @@ jobs:
             cat "changes_${matrix_file}"
             ls
             pwd
+            echo "::set-output name=matrix-file::"changes_${matrix_file}""
         else
+            matrix_file=$(basename "${{ matrix.file }}")
+            touch "changes_${matrix_file}"
             echo "false" > "changes_${matrix_file}"
             cat "changes_${matrix_file}"
+            ls
+            pwd
+            echo "::set-output name=matrix-file::"changes_${matrix_file}""
         fi
-        echo "::set-output name=matrix-file::"changes_${matrix_file}""
+        
 
     - name: Upload changes artifact
       uses: actions/upload-artifact@v4
