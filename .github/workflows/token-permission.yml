@@ -73,6 +73,7 @@ jobs:
         git config user.name ${{ secrets.GIT_COMMITTER_NAME }}
         git add .
         git commit -m "Added Permission Block- $(date +"%Y-%m-%d %H:%M:%S")"
+        git pull origin main
         git push # Replace 'branch-name' with the branch name
       env:
         GITHUB_WORKSPACE: ${{ github.workspace }}
