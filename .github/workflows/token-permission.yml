@@ -55,27 +55,27 @@ jobs:
             fi
           done
 
-    # - name: Check for Changes
-    #   id: check_changes
-    #   run: |
-    #     if git diff --quiet; then
-    #     echo "No changes to commit. Skipping commit step."
-    #     echo "::set-output name=changes::false"
-    #     else
-    #     echo "::set-output name=changes::true"
-    #     fi
-    #   shell: bash
+    - name: Check for Changes
+      id: check_changes
+      run: |
+        if git diff --quiet; then
+        echo "No changes to commit. Skipping commit step."
+        echo "::set-output name=changes::false"
+        else
+        echo "::set-output name=changes::true"
+        fi
+      shell: bash
 
-    # - name: Commit Changes
-    #   if: steps.check_changes.outputs.changes == 'true'
-    #   run: |
-    #     git config user.email ${{ secrets.GIT_COMMITTER_EMAIL }}
-    #     git config user.name ${{ secrets.GIT_COMMITTER_NAME }}
-    #     git add .
-    #     git commit -m "Added Permission Block- $(date +"%Y-%m-%d %H:%M:%S")"
-    #     git push # Replace 'branch-name' with the branch name
-    #   env:
-    #     GITHUB_WORKSPACE: ${{ github.workspace }}
-    #     GITHUB_TOKEN: ${{ secrets.GK_PAT }}
+    - name: Commit Changes
+      if: steps.check_changes.outputs.changes == 'true'
+      run: |
+        git config user.email ${{ secrets.GIT_COMMITTER_EMAIL }}
+        git config user.name ${{ secrets.GIT_COMMITTER_NAME }}
+        git add .
+        git commit -m "Added Permission Block- $(date +"%Y-%m-%d %H:%M:%S")"
+        git push # Replace 'branch-name' with the branch name
+      env:
+        GITHUB_WORKSPACE: ${{ github.workspace }}
+        GITHUB_TOKEN: ${{ secrets.GK_PAT }}
 
 
