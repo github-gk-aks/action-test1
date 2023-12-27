@@ -15,7 +15,7 @@ on: [pull_request]
 jobs:
   rest-api-library:
     runs-on: ubuntu-latest
-    # permissions:
+    # ermissions:
     #   issues: write
     #   pull-requests: write
     steps:
