@@ -47,7 +47,7 @@ jobs:
         echo "preparing to run the for loop"
           for file_path in "${files[@]}"; do
             echo "Inside the for loop"
-            if ! grep -qE "(^|[^#\/])permissions:" "$file_path"; then
+            if ! grep -qE "^\s*permissions:" <(grep -vE "^\s*#|^\s*//") "$file_path"; then
               echo "Permissions block not found in $file_path. Adding..."
               sed -i -e '/^jobs:/i \permissions: write-all\n' "$file_path" 
             else
