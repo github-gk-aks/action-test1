@@ -1,0 +1,31 @@
+# Sample CODEOWNERS File
+
+# Default CODEOWNERS
+*       @repo-admins
+
+# Top-level directory
+/docs/  @documentation-team
+/tests/ @testing-team
+
+# Backend code
+/backend/               @backend-team @frontend-team @code-review-team
+
+# Frontend code
+/frontend/              @frontend-team
+
+# Configuration files
+/config/                @devops-team
+
+# Scripts
+/scripts/               @automation-team
+
+# Code review specialists
+*.js                    @code-review-team
+*.css                   @code-review-team
+*.py                    @code-review-team
+
+# Database related code
+/database/              @db-admins-team
+
+# API related code
+/api/                   @api-team
